@@ -1,5 +1,5 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import React, { useState } from "react";
 import axios from "axios";
 
 const RegisterPage = () => {
@@ -7,14 +7,19 @@ const RegisterPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const registerUser = (e) => {
+  const registerUser = async (e) => {
     e.preventDefault();
-    axios.post("/register", {
+    try {
+      await axios.post("/register", {
         name,
         email,
         password,
     });
-  };
+    alert('Registration successful. Now you can login!');
+    } catch (error) {
+       alert('Registration failed. Please try again');
+    }
+  } 
 
   return (
     <div className="mt-4 grow flex items-center justify-around">
@@ -23,7 +28,7 @@ const RegisterPage = () => {
         <form className="max-w-md mx-auto" onSubmit={registerUser}>
           <input
             type="text"
-            placeholder="Rabia Abdur Rehman"
+            placeholder="your name"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />

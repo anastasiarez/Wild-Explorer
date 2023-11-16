@@ -9,6 +9,7 @@ import RegisterPage from "./components/RegisterPage";
 import Layout from "./Layout";
 
 axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.withCredentials = true;
 
 function App() {
   return (
