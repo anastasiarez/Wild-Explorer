@@ -13,12 +13,7 @@ function App() {
 
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-      </Router>
+
 
       <div>
         {/* LOGO */}
@@ -88,6 +83,12 @@ function App() {
           </div>
         </header>
       </div>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+        </Routes>
+      </Router>
     </>
   );
 }
