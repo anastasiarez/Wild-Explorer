@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
+import LoginPage from './components/LoginPage'
+import RegisterPage from './components/RegisterPage'
 import viteLogo from '/vite.svg'
 import './App.css'
 import axios from 'axios';
@@ -11,13 +13,18 @@ function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <>
-      <div>
-      TEST
-      </div>
+    <Router>
+      <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path='/register' element={<RegisterPage />} />
 
-    </>
+    </Routes>
+    </Router>
+    
+
+
   )
+
 }
 
 export default App
