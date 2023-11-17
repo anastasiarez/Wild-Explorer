@@ -7,6 +7,9 @@ import IndexPage from "./components/IndexPage";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 import Layout from "./Layout";
+import AccountPage from "./components/PlacesPage"
+import PlacesPage from "./components/PlacesPage";
+
 
 axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.withCredentials = true;
@@ -19,6 +22,7 @@ function App() {
         <Route index element={<IndexPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/account/:subpage/:action" element={<AccountPage />}/>
       </Route>
     </Routes>
     // </Router>
