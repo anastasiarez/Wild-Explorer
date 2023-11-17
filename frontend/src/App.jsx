@@ -7,6 +7,7 @@ import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
 
 axios.defaults.baseURL = "http://localhost:4000/";
+axios.defaults.withCredentials = true;
 
 function App() {
   const [count, setCount] = useState(0);
@@ -19,7 +20,7 @@ function App() {
         {/* LOGO */}
         <header className="p-4 flex justify-between">
           <a href="/" className="flex items-center gap-1">
-            <img src={logo} alt="Logo" class="w-30 h-20 mr-0" />
+            <img src={logo} alt="Logo" className="w-30 h-20 mr-0" />
           </a>
 
           {/* SEARCH */}
@@ -38,7 +39,7 @@ function App() {
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  class="w-4 h-4"
+                  className="w-4 h-4"
                 >
                   <path
                     fill-rule="evenodd"
@@ -56,7 +57,7 @@ function App() {
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
-                class="w-6 h-6"
+                className="w-6 h-6"
               >
                 <path
                   fill-rule="evenodd"
