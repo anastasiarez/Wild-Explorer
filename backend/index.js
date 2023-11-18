@@ -8,8 +8,10 @@ const bcrypt = require('bcryptjs');
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jsonWebToken = require('jsonwebtoken');
 const jwtSecret = 'fnr;nva4o5awbew/cvae';
-const app = express();
+const imageDownloader = require('image-downloader');
 
+const app = express();
+app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(express.json());
 
 app.use(
@@ -20,18 +22,18 @@ app.use(
 );
 
 mongoose.connect(process.env.MONGO_URL, {
-  useNewUrlParser: true, 
-  useUnifiedTopology: true, 
-  useCreateIndex: true, 
-  useFindAndModify: false, 
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 app.post("/register", async (req, res) => {
   const { user_name, email, password } = req.body;
-  
+
   try {
     const userDoc = await User.create({
-    user_name, 
+    user_name,
     email,
     password: bcrypt.hashSync(password, bcryptSalt),
   });
@@ -61,6 +63,15 @@ app.post('/login', async (req, res) => {
 }
 });
 
+app.post('/upload-by-link', async (req, res) => {
+  const {link} = req.body;
+  const newName = 'photo' + Date.now() + '.jpg';
+  await download.image({
+    url: link,
+    dest: __dirname+'uploads',
+
+  })
+})
 
 app.listen(4000, () => {
   console.log("Server is running on port 4000");
