@@ -11,7 +11,8 @@ require("dotenv").config();
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
-const place = require('./models/Place.js');
+const Place = require('./models/Place.js');
+const PlaceModel = require("./models/Place.js");
 
 
 
@@ -121,6 +122,21 @@ res.json(uploadedFiles);
 })
 
 app.post('/places', (req, res) => {
+  const { token } = req.cookies;
+  const {title, address, addedPhoto, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
+  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    await Place.create({
+      owner:userData.id,
+      title, address, addedPhoto, description, perks,
+      extraInfo, checkIn, checkOut, maxGuests
+
+    });
+
+    res.json(placeDoc);
+
+  });
+
 
 })
 
