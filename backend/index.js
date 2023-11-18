@@ -11,6 +11,8 @@ require("dotenv").config();
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
+const place = require('./models/Place.js');
+
 
 
 const app = express();
@@ -115,6 +117,10 @@ app.post('/upload', photosMiddleware.array('photos',100), (req, res) => {
   uploadedFiles.push(newPath.replace('uploads/', ''));
 }
 res.json(uploadedFiles);
+
+})
+
+app.post('/places', (req, res) => {
 
 })
 

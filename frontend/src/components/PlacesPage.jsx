@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import Perks from "../Perks";
 import axios from "axios";
 import PhotoUploader from "../PhotoUploader";
@@ -16,6 +16,7 @@ const PlacesPage = () => {
   const [checkOut, setCheckOut] = useState("");
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
+  const [redirect, setRedirect] = useState('');
 
   //helper functions
   const inputHeader = (text) => {
@@ -35,7 +36,24 @@ const PlacesPage = () => {
     );
   };
 
+  async function addNewPlace(e) {
+    e.preventDefault();
+    await axios.post("/places",{
+      title,
+      address,
+      description,
+      addedPhotos,
+      checkIn,
+      checkOut,
+      extraInfo,
+      maxGuests,
+    });
+    setRedirect('/account/places')
 
+  }
+  if(redirect){
+    return <Navigate to={redirect} />
+  }
 
   return (
     <div>
@@ -65,7 +83,7 @@ const PlacesPage = () => {
       )}
       {action === "new" && (
         <div>
-          <form>
+          <form onSubmit={addNewPlace}>
             {inputValue("Title", "Fancy title for property")}
             <input
               type="text"
@@ -83,7 +101,10 @@ const PlacesPage = () => {
             />
 
             {inputValue("Photo", "more photos")}
-            <PhotoUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />
+            <PhotoUploader
+              addedPhotos={addedPhotos}
+              onChange={setAddedPhotos}
+            />
 
             {inputValue("Description", "Description of the place")}
             <textarea
@@ -137,8 +158,9 @@ const PlacesPage = () => {
             </div>
             <div>
               <br></br>
-              <button className="bg-secondary px-16 py-2 rounded-2xl">Save</button>
-
+              <button className="bg-secondary px-16 py-2 rounded-2xl">
+                Save
+              </button>
             </div>
           </form>
         </div>
