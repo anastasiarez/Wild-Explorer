@@ -8,9 +8,12 @@ const jsonWebToken = require('jsonwebtoken');
 const jwtSecret = 'fnr;nva4o5awbew/cvae';
 const cookieParser = require('cookie-parser');
 require("dotenv").config();
+const app = express();
+const imageDownloader = require('image-downloader');
+
 
 const app = express();
-
+app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -37,7 +40,6 @@ app.post("/register", async (req, res) => {
       email,
       password: bcrypt.hashSync(password, bcryptSalt),
     });
-
     res.json({ userDoc });
   } catch (e) {
     res.status(422).json(e);
@@ -68,6 +70,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
+
 app.get('/profile', (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
@@ -81,6 +84,21 @@ app.get('/profile', (req, res) => {
     res.json(null);
   }
 });
+
+app.post('/upload-by-link', async (req, res) => {
+  const {link} = req.body;
+  const newName = 'photo' + Date.now() + '.jpg';
+  await download.image({
+    url: link,
+    dest: __dirname+'uploads',
+
+  })
+})
+
+app.post('/logout',(req,res) => {
+    res.cookie('token','').json(true);
+  });
+
 
 app.listen(4000, () => {
   console.log("Server is running on port 4000");
