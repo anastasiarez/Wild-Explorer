@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Perks from "../Perks";
 import axios from "axios";
@@ -176,7 +176,9 @@ const PlacesPage = () => {
               </div>
             </div>
             <div>
-              <button className="primary my-4">Save</button>
+              <br></br>
+              <button className="bg-secondary px-16 py-2 rounded-2xl">Save</button>
+
             </div>
           </form>
         </div>
