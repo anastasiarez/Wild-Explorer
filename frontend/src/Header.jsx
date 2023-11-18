@@ -1,13 +1,16 @@
 import {Link} from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "./UserContext.jsx";
 
 const Header = () => {
+  const {user} = useContext(UserContext);
     return(
         <>
         <div>
           {/* LOGO */}
           <header className="p-4 flex justify-between">
             <a href="/" className="flex items-center gap-1">
-              <img src="/logo.png" alt="Logo" class="w-30 h-20 mr-0" />
+              <img src="/logo.png" alt="Logo" className="w-30 h-20 mr-0" />
             </a>
 
             {/* SEARCH */}
@@ -26,30 +29,31 @@ const Header = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    class="w-4 h-4"
+                    className="w-4 h-4"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM2.25 10.5a8.25 8.25 0 1114.59 5.28l4.69 4.69a.75.75 0 11-1.06 1.06l-4.69-4.69A8.25 8.25 0 012.25 10.5z"
-                      clip-rule="evenodd"
+                      clipRule="evenodd"
                     />
                   </svg>
                 </button>
               </div>
             </div>
             {/* USER */}
-            <Link to={user?'account':'/login'} className="pt-10"> 
+
+            <Link to={user?'/account':'/login'} className="pt-10">
               <div className="flex gap-2 border border-gray-300 rounded-full py-2 px-4">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
                   fill="currentColor"
-                  class="w-6 h-6"
+                  className="w-6 h-6"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   />
                 </svg>
 
@@ -68,6 +72,11 @@ const Header = () => {
                   </svg>
                 </div>
               </div>
+              {!!user && (
+                <div>
+                  {user.name}
+                </div>
+              )}
             </Link>
           </header>
         </div>
