@@ -8,7 +8,6 @@ const jsonWebToken = require('jsonwebtoken');
 const jwtSecret = 'fnr;nva4o5awbew/cvae';
 const cookieParser = require('cookie-parser');
 require("dotenv").config();
-const app = express();
 const imageDownloader = require('image-downloader');
 
 

@@ -1,6 +1,10 @@
+import React, { useState } from 'react';
 import {useContext} from "react";
 import {UserContext} from "../UserContext.jsx";
 import {Navigate} from "react-router-dom";
+import { Link, useParams } from 'react-router-dom';
+import axios from 'axios';
+
 
 export default function AccountPage(){
 
@@ -57,7 +61,7 @@ return (
 {subpage === 'profile' && (
 <div className="text-center max-w-lg mx-auto">
 Logged in as {user.name} ({user.email})<br />
-<button  oncClick={logout} className="primary max-w-sm mt-2">Logout</button>
+<button onClick={logout} className="primary max-w-sm mt-2">Logout</button>
 </div>
 )}
  </div>
