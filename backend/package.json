@@ -19,6 +19,6 @@
     "image-downloader": "^4.3.0",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^4.17.1",
-    "mongoose": "^5.13.7"
+    "mongoose": "^5.13.21"
   }
 }
