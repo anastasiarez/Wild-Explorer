@@ -8,7 +8,7 @@ const PlacesPage = () => {
   const { action } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
-  const [addedPhotos, setAddedPhoto] = useState([]);
+  const [addedPhotos, setAddedPhotos] = useState([]);
   const [photoLink, setPhotoLink] = useState("");
   const [description, setDescription] = useState("");
   const [perks, setPerks] = useState([]);
@@ -38,7 +38,7 @@ const PlacesPage = () => {
   async function addPhotoUsingLink(e) {
     e.preventDefault();
     const {data:filename} = await axios.post('/upload-by-link', {link: photoLink})
-    setAddedPhoto(prev => {
+    setAddedPhotos(prev => {
       return [...prev, filename];
     });
     setPhotoLink('');
@@ -95,14 +95,14 @@ const PlacesPage = () => {
                 type="text"
                 value={photoLink}
                 onChange={(e) => setPhotoLink(e.target.value)}
-                placeholder={"add using a link .....jpg"}
+                placeholder={"add using a link ...jpg"}
               />
-              <button onClick={addPhotoUsingLink} className="bg-gray-200 px-4 rouded-2xl">
+              <button onClick={addPhotoUsingLink} className="bg-gray-200 px-4 rounded-2xl">
                 Add&nbsp; Photo
               </button>
             </div>
             <div className="mt-2 grid gap-2 grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-              {addedPhotos.lenghth > 0 && addedPhotos.map(link => (
+              {addedPhotos.length > 0 && addedPhotos.map(link => (
                 <div>
                  <img className="rounded-2xl" src={"http://localhost:4000/uploads/"+link} alt="" />
                 </div>
