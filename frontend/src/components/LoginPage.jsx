@@ -42,9 +42,14 @@ const LoginPage = () => {
           value={password} 
           onChange={ev => setPassword(ev.target.value)}  />
           
-          <button className="primary">Login</button>
+          <button className="bg-secondary px-16 py-2 rounded-2xl">Login</button>
+
           <div className="text-center py-2 text-gray-500">
-            Create a free acount. <Link className="underline text-bn" to={'/register'}>Register</Link></div>
+            Create a free acount. </div>
+            
+            <div>
+            <Link className="bg-secondary px-16 py-2 rounded-2xl" to={'/register'}>Register</Link>
+            </div>
         </form>
       </div>
     </div>

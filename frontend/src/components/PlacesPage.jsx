@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Perks from "../Perks";
 
@@ -87,9 +87,8 @@ const PlacesPage = () => {
                 onChange={(e) => setPhotoLink(e.target.value)}
                 placeholder={"add using a link .....jpg"}
               />
-              <button className="bg-gray-200 px-4 rouded-2xl">
-                Add&nbsp; Photo
-              </button>
+              <button className="bg-secondary px-10 rounded-2xl">Add</button>
+
             </div>
             <div className="mt-2 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
               <button className="flex gap-1 justify-center border bg-transparent rounded-2xl p-8 text-2xl text-gray-600">
@@ -161,7 +160,9 @@ const PlacesPage = () => {
               </div>
             </div>
             <div>
-              <button className="primary my-4">Save</button>
+              <br></br>
+              <button className="bg-secondary px-16 py-2 rounded-2xl">Save</button>
+
             </div>
           </form>
         </div>
