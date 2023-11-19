@@ -94,7 +94,7 @@ app.post('/upload-by-link', async (req, res) => {
   const newName = 'photo' + Date.now() + '.jpg';
   await imageDownloader.image({
     url: link,
-    dest: __dirname+'/uploads/' +newName,
+    dest: __dirname+'/uploads/' + newName,
 
   });
   res.json(newName);
@@ -104,7 +104,7 @@ app.post('/logout',(req,res) => {
     res.cookie('token','').json(true);
   });
 
-const photosMiddleware = multer({dest:'uploads/'});
+const photosMiddleware = multer({dest:'uploads'});
 app.post('/upload', photosMiddleware.array('photos',100), (req, res) => {
   const uploadedFiles = [];
  for (let i = 0; i < req.files.length; i++)
@@ -123,11 +123,11 @@ res.json(uploadedFiles);
 
 app.post('/places', (req, res) => {
   const { token } = req.cookies;
-  const {title, address, addedPhoto, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
+  const {title, address, addedPhoto, description, price, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
-    await Place.create({
-      owner:userData.id,
+    const placeDoc = await Place.create({
+      owner:userData.id, price,
       title, address, photos:addedPhoto, description, perks,
       extraInfo, checkIn, checkOut, maxGuests
 
@@ -147,6 +147,25 @@ app.get('/user-places', (req, res) => {
     res.json( await Place.find({owner:id}));
   })
 });
+
+app.put('/places', async (req, res) => {
+  const { token } = req.cookies;
+  const {id, title, address, addedPhoto, description, price, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
+  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
+    if (err) throw err;
+    const placeDoc = await Place.findById(id);
+    if (userData.id === placeDoc.owner.toString()) {
+      placeDoc.set({
+        title,address,photos:addedPhotos,description,
+        perks,extraInfo,checkIn,checkOut,maxGuests,price,
+      });
+      await placeDoc.save();
+      res.json('ok');
+    }
+  });
+
+
+})
 //end points for index page
 app.get('/places', async (req, res) => {
   res.json(await Place.find());
