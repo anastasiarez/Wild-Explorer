@@ -140,12 +140,16 @@ app.post('/places', (req, res) => {
 
 });
 
-app.get('/places', (req, res) => {
+app.get('/user-places', (req, res) => {
   const { token } = req.cookies;
   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
     const {id} = userData;
     res.json( await Place.find({owner:id}));
   })
+});
+//end points for index page
+app.get('/places', async (req, res) => {
+  res.json(await Place.find());
 })
 
 
