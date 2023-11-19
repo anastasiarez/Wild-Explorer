@@ -14,8 +14,5 @@ button {
 
 button.primary {
     background-color: #FF914D;
-    @apply px-16 py-2 rounded-2xl
-    
-    /* this is to make the red button big* */
-    /* @apply bg-primary p-2 w-full text-white rounded-full-2xl; */
+    @apply px-16 py-2 rounded-2xl text-white;
 }
