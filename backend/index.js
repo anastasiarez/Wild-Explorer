@@ -121,6 +121,7 @@ res.json(uploadedFiles);
 
 })
 
+
 app.post('/places', (req, res) => {
   const { token } = req.cookies;
   const {title, address, addedPhoto, description, price, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
@@ -133,11 +134,40 @@ app.post('/places', (req, res) => {
 
     });
 
-    res.json(placeDoc);
+    try {
+      const placeDoc = await Place.create({
+        owner: userData.id,
+        title,
+        address,
+        photos: addedPhoto,
+        description,
+        perks,
+        extraInfo,
+        checkIn,
+        checkOut,
+        maxGuests
+      });
 
+      res.json(placeDoc);// previous part run up to here
+    } catch (error) {
+      console.error('Error creating place:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
   });
+});
+
+// app.get('/places',(req,res) =>{ // missing part from previous step
+//     const {token} = req.cookies;
+//     jsonWebToken.verify(token,jwtSecret,{}, async (err,userData)=>{
+//         const{id} = userData;
+//         res.json(await Place.find({owner:id}));
+//     });
+// });
 
 
+app.get('/places/:id', async (req,res) => { //Silvia
+    const {id} = req.params;
+    res.json(await Place.findById(id));
 });
 
 app.get('/user-places', (req, res) => {

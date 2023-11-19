@@ -43,6 +43,7 @@ const PlacesFormPage = () => {
  }, [id]);
 
 
+
   //helper functions
   const inputHeader = (text) => {
     return <h2 className="text-xl mt-4">{text}</h2>;
@@ -52,7 +53,7 @@ const PlacesFormPage = () => {
     return <p className="text-gray-500 text-sm">{text}</p>;
   };
 
-  const inputValue = (header, description) => {
+  const inputValue = (header, description) => { //this function is different name from previous step
     return (
       <>
         {inputHeader(header)}
@@ -61,7 +62,7 @@ const PlacesFormPage = () => {
     );
   };
 
-  async function addNewPlace(e) {
+  async function SavePlace(e) {// Silvia ev
     e.preventDefault();
     await axios.post("/places",{
       title,
@@ -77,58 +78,60 @@ const PlacesFormPage = () => {
 
 
   }
-
   if(redirect){
     return <Navigate to={'/account/places'}/>
   }
-
     return (
         <div>
           <AccountNav />
-          <form onSubmit={addNewPlace}>
-            {inputValue("Title", "Fancy title for property")}
+          <form onSubmit={SavePlace}>
+            {inputValue("Title", "")}
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="title, for example: my lovely apartment"/>
 
-            {inputValue("Address", "Address to this specific property")}
+            {inputValue("Address")}
             <input
               type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="address"/>
 
-            {inputValue("Photo", "more photos")}
+            {inputValue("Photo")}
             <PhotoUploader
               addedPhotos={addedPhotos}
               onChange={setAddedPhotos}/>
 
-            {inputValue("Description", "Description of the place")}
+            {inputValue("Description")}
+            <br></br>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}/>
 
-            {inputValue("Perks", "Select all the perks.")}
+            {inputValue("Perks")}
+            <br></br>
             <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               <Perks selected={perks} onChange={setPerks} />
             </div>
+            <br></br>
 
-            {inputValue("Extra info", "Rules")}
+            {inputValue("Extra info & Rules")}
+            <br></br>
             <textarea
               value={extraInfo}
               onChange={(e) => setExtraInfo(e.target.value)}
             />
 
             {inputValue(
-              "CheckIn and CheckOut Time",
-              "Add CheckIn/CheckOut time"
+              "Check-in & Check-out Time"
             )}
+            <br></br>
 
             <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
               <div>
-                <h3 className="mt-2 -mb-1">Check in time</h3>
+                <h3 className="mt-2 -mb-1">Check-in time</h3>
                 <input
                   type="text"
                   value={checkIn}
@@ -137,7 +140,7 @@ const PlacesFormPage = () => {
                 />
               </div>
               <div>
-                <h3 className="mt-2 -mb-1">Check out time</h3>
+                <h3 className="mt-2 -mb-1">Check-out time</h3>
                 <input
                   type="text"
                   value={checkOut}
@@ -162,6 +165,7 @@ const PlacesFormPage = () => {
                   onChange={(e) => setPrice(e.target.value)}/>
               </div>
             <div>
+              <br></br>
               <br></br>
               <button className="bg-secondary px-16 py-2 rounded-2xl">
                 Save

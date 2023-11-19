@@ -6,7 +6,6 @@ import Layout from "./Layout";
 import RegisterPage from "./components/RegisterPage";
 import axios from "axios";
 import { UserContextProvider } from "./UserContext";
-import AccountPage from "./components/PlacesPage";
 import PlacesPage from "./components/PlacesPage";
 import ProfilePage from "./components/ProfilePage";
 import PlacesFormPage from "./components/PlacesFormPage";
@@ -24,6 +23,8 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
 
           <Route path="/account" element={<ProfilePage />} />
+          <Route path="/account/bookings" element={<PlacesPage />} />
+          
           <Route path="/account/places" element={<PlacesPage />} />
           <Route path="/account/places/new" element={<PlacesFormPage />} />
           <Route path="/account/places/:id" element={<PlacesFormPage />} />
@@ -34,3 +35,5 @@ function App() {
 }
 
 export default App;
+
+
