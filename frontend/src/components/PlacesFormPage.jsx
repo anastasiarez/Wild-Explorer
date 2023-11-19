@@ -22,13 +22,26 @@ const PlacesFormPage = () => {
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [redirectToPlacesList, setRedirectToPlacesList] = useState(false);
   const [redirect, setRedirect] = useState(false);
+
   useEffect(() => {
     if(!id){
       return;
     }
-    axios.get('/places/'+id)
-
+    axios.get('/places/'+id).then(response => { // Silvia 
+       const {data} = response;
+       setTitle(data.title);
+       setAddress(data.address);
+       setAddedPhotos(data.photos);
+       setDescription(data.description);
+       setPerks(data.perks);
+       setExtraInfo(data.extraInfo);
+       setCheckIn(data.checkIn);
+       setCheckOut(data.checkOut);
+       setMaxGuests(data.maxGuests);
+      // setPrice(data.price);
+    });
   }, [id]);
+
 
 
   //helper functions
@@ -40,7 +53,7 @@ const PlacesFormPage = () => {
     return <p className="text-gray-500 text-sm">{text}</p>;
   };
 
-  const inputValue = (header, description) => {
+  const inputValue = (header, description) => { //this function is different name from previous step
     return (
       <>
         {inputHeader(header)}
@@ -49,31 +62,37 @@ const PlacesFormPage = () => {
     );
   };
 
-  async function addNewPlace(e) {
+  async function SavePlace(e) {// Silvia ev
     e.preventDefault();
-    await axios.post("/places",{
-      title,
-      address,
-      description,
-      addedPhotos,
-      checkIn,
-      checkOut,
-      extraInfo,
-      maxGuests,
-    });
-    setRedirect(true);
-
-
+    const placeData = {
+        title,
+        address,
+        description,
+        addedPhotos,
+        checkIn,
+        checkOut,
+        extraInfo,
+        maxGuests,
+    };
+    if (id) {
+        //update
+        await axios.put("/places",{
+            id, ...placeData
+          });
+          setRedirect(true);
+    } else {
+        //new place
+        await axios.post("/places", placeData);
+        setRedirect(true);      
+    }
   }
-
   if(redirect){
     return <Navigate to={'/account/places'}/>
   }
-
     return (
         <div>
           <AccountNav />
-          <form onSubmit={addNewPlace}>
+          <form onSubmit={SavePlace}> 
             {inputValue("Title", "")}
             <input
               type="text"
