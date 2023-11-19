@@ -1,3 +1,4 @@
+import "../App.css";
 import React, { useState, useContext } from "react";
 import { UserContext } from "../UserContext.jsx";
 import { Navigate } from "react-router-dom";
