@@ -1,4 +1,6 @@
 import { useState } from "react";
+import AccountNav from "../AccountNav";
+import { Navigate } from "react-router-dom";
 
 
 const PlacesFormPage = () => {
@@ -14,6 +16,8 @@ const PlacesFormPage = () => {
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [redirectToPlacesList, setRedirectToPlacesList] = useState(false);
+  const [redirect, setRedirect] = useState(false)
+
 
   //helper functions
   const inputHeader = (text) => {
@@ -45,12 +49,18 @@ const PlacesFormPage = () => {
       extraInfo,
       maxGuests,
     });
-   
+    setRedirect(true);
 
+
+  }
+
+  if(redirect){
+    return <Navigate to={'/account/places'}/>
   }
 
     return (
         <div>
+          <AccountNav />
           <form onSubmit={addNewPlace}>
             {inputValue("Title", "Fancy title for property")}
             <input

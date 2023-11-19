@@ -5,8 +5,9 @@ import { Navigate } from "react-router-dom";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import PlacesPage from "./PlacesPage.jsx";
+import AccountNav from "../AccountNav.jsx";
 
-export default function AccountPage() {
+export default function ProfilePage() {
   const [redirect, setRedirect] = useState(null);
   const [ready, user, setUser] = useContext(UserContext);
 
@@ -25,20 +26,11 @@ export default function AccountPage() {
     return "Loading...";
   }
 
-  if (ready && !user) {
+  if (ready && !user && !redirect) {
     return <Navigate to={"/login"} />;
   }
 
-  function linkClasses(type = null) {
-    let classes = "inline-flex gap-1 py-2 px-6 rounded-full";
 
-    if (type === subpage) {
-      classes += "bg-primary text-white ";
-    } else {
-      classes += "bg-gray-200";
-    }
-    return classes;
-  }
 
   if (redirect) {
     return <Navigate to={redirect} />;
@@ -46,7 +38,9 @@ export default function AccountPage() {
 
   return (
     <div>
-      
+
+      <AccountNav />
+
 
       {subpage === "profile" && (
         <div className="text-center max-w-lg mx-auto">
