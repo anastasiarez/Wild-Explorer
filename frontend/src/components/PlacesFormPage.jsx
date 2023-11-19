@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountNav from "../AccountNav";
 import { Navigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ import axios from "axios";
 
 const PlacesFormPage = () => {
     //states
-  const { action } = useParams();
+  const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
   const [description, setDescription] = useState("");
@@ -21,7 +21,14 @@ const PlacesFormPage = () => {
   const [maxGuests, setMaxGuests] = useState(1);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [redirectToPlacesList, setRedirectToPlacesList] = useState(false);
-  const [redirect, setRedirect] = useState(false)
+  const [redirect, setRedirect] = useState(false);
+  useEffect(() => {
+    if(!id){
+      return;
+    }
+    axios.get('/places/'+id)
+
+  }, [id]);
 
 
   //helper functions
