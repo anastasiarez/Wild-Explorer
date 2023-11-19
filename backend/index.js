@@ -121,33 +121,6 @@ res.json(uploadedFiles);
 
 })
 
-// app.post('/places', (req, res) => {
-//   const { token } = req.cookies;
-//   const {title, address, addedPhoto, description, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
-//   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-//     if (err) throw err;
-//     await Place.create({
-//       owner:userData.id,
-//       title, address, photos:addedPhoto, description, perks,
-//       extraInfo, checkIn, checkOut, maxGuests
-
-//     });
-
-//     res.json(placeDoc);
-
-//   });
-
-
-// });
-
-// app.get('/places', (req, res) => {
-//   const { token } = req.cookies;
-//   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-//     const {id} = userData;
-//     res.json( await Place.find({owner:id}));
-//   })
-// })
-
 
 app.post('/places', (req, res) => {
   const { token } = req.cookies;

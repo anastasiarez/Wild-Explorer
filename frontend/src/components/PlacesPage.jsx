@@ -16,7 +16,7 @@ const PlacesPage = () => {
 
       <div className="text-center">
         <Link
-          className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
+          className="inline-flex gap-1 bg-secondary text-white py-2 px-6 rounded-full"
           to={"/account/places/new"}
         >
           <svg

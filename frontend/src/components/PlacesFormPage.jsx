@@ -74,15 +74,15 @@ const PlacesFormPage = () => {
         <div>
           <AccountNav />
           <form onSubmit={addNewPlace}>
-            {inputValue("Title", "Fancy title for property")}
+            {inputValue("Title", "")}
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="title, for example: my lovely apartment"
+              placeholder="example: my lovely apartment"
             />
 
-            {inputValue("Address", "Address to this specific property")}
+            {inputValue("Address")}
             <input
               type="text"
               value={address}
@@ -90,37 +90,41 @@ const PlacesFormPage = () => {
               placeholder="address"
             />
 
-            {inputValue("Photo", "more photos")}
+            {inputValue("Photo")}
             <PhotoUploader
               addedPhotos={addedPhotos}
               onChange={setAddedPhotos}
             />
 
-            {inputValue("Description", "Description of the place")}
+            {inputValue("Description")}
+            <br></br>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
 
-            {inputValue("Perks", "Select all the perks.")}
+            {inputValue("Perks")}
+            <br></br>
             <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
               <Perks selected={perks} onChange={setPerks} />
             </div>
+            <br></br>
 
-            {inputValue("Extra info", "Rules")}
+            {inputValue("Extra info & Rules")}
+            <br></br>
             <textarea
               value={extraInfo}
               onChange={(e) => setExtraInfo(e.target.value)}
             />
 
             {inputValue(
-              "CheckIn and CheckOut Time",
-              "Add CheckIn/CheckOut time"
+              "Check-in & Check-out Time"
             )}
+            <br></br>
 
             <div className="grid gap-2 sm:grid-cols-3">
               <div>
-                <h3 className="mt-2 -mb-1">Check in time</h3>
+                <h3 className="mt-2 -mb-1">Check-in time</h3>
                 <input
                   type="text"
                   value={checkIn}
@@ -129,7 +133,7 @@ const PlacesFormPage = () => {
                 />
               </div>
               <div>
-                <h3 className="mt-2 -mb-1">Check out time</h3>
+                <h3 className="mt-2 -mb-1">Check-out time</h3>
                 <input
                   type="text"
                   value={checkOut}
@@ -147,6 +151,7 @@ const PlacesFormPage = () => {
               </div>
             </div>
             <div>
+              <br></br>
               <br></br>
               <button className="bg-secondary px-16 py-2 rounded-2xl">
                 Save
