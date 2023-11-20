@@ -7,24 +7,45 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [redirect, setRedirect] = useState(false);
-  const {setUser} = useContext(UserContext);
+  const { setUser } = useContext(UserContext);
 
-
-  async function handleLoginSubmit (ev) {
+  async function handleLoginSubmit(ev) {
     ev.preventDefault();
+
+    if (!email || !password) {
+      alert("Please enter both email and password.");
+      return;
+    }
+
+
     try {
-      const data = await axios.post('/login', {email, password});
+      const data = await axios.post('/login', { email, password });
       console.log('Server Response:', data);
       setUser(data.data);
-      alert("Login successfull");
-      setRedirect(true)
-    } catch (e) {
-      alert("Login failed");
+      setRedirect(true);
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (error.response.status === 401) {
+          // Incorrect email or password
+          alert("Incorrect email or password. Please try again.");
+        } else {
+          // Other server error
+          alert("Login failed. Please try again later.");
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        alert("No response from the server. Please try again later.");
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        alert("An unexpected error occurred. Please try again later.");
+      }
     }
   }
 
   if (redirect) {
-    return <Navigate to={'/'} />
+    return <Navigate to={'/'} />;
   }
   return (
     <div className="mt-4 grow flex items-center justify-around">
@@ -32,24 +53,24 @@ const LoginPage = () => {
         <h1 className="text-4xl text-center mb-4">Login</h1>
 
         <form className="max-w-md mx-auto" onSubmit={handleLoginSubmit}>
-          <input type="email" 
-          placeholder="example@email.com" 
-          value={email} 
-          onChange={ev => setEmail(ev.target.value)} />
-          
-          <input type="password" 
-          placeholder="password" 
-          value={password} 
-          onChange={ev => setPassword(ev.target.value)}  />
-          
+          <input type="email"
+            placeholder="example@email.com"
+            value={email}
+            onChange={ev => setEmail(ev.target.value)} />
+
+          <input type="password"
+            placeholder="password"
+            value={password}
+            onChange={ev => setPassword(ev.target.value)} />
+
           <button className="bg-secondary px-16 py-2 rounded-2xl">Login</button>
 
           <div className="text-center py-2 text-gray-500">
             Create a free acount. </div>
-            
-            <div>
+
+          <div>
             <Link className="bg-secondary px-16 py-2 rounded-2xl" to={'/register'}>Register</Link>
-            </div>
+          </div>
         </form>
       </div>
     </div>

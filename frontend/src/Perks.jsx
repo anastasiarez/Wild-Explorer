@@ -2,14 +2,13 @@ const Perks = ({selected, onChange}) => {
 
   function handleClick(e){ // ev
     const {checked, name} = e.target;
+
     if(checked){
       onChange([...selected, name]);
 
     }else{
-      onChange([...selected.filter(selectedName => selectedName != name)]);
+      onChange([...selected.filter(selectedName => selectedName !== name)]);
     }
-
-
   }
   return (
     <>

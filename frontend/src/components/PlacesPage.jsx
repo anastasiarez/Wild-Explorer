@@ -42,7 +42,7 @@ const PlacesPage = () => {
       </div>
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {places.length === 0 ? (
-          <p>Loading...</p>
+          <p>...You don't have listings yet</p>
         ) : (
           places.map((place) => (
             <Link
@@ -63,6 +63,12 @@ const PlacesPage = () => {
                 <h2 className="text-xl font-semibold mb-2">{place.title}</h2>
                 <p className="text-gray-700 text-sm leading-snug mb-4">
                   {place.description}
+                </p>
+                <p className="text-gray-700 text-sm leading-snug mb-4">
+                  {place.perks}
+                </p>
+                <p className="text-gray-700 text-sm leading-snug mb-4">
+                  ${place.price}
                 </p>
                 <Link
                   to={{ pathname: "/account/places/" + place._id }}
