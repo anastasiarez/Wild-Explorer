@@ -82,7 +82,7 @@ app.get('/profile', (req, res) => {
     jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
       const { name, email, _id } = await User.findById(userData.id);
-      res.json({name, email, _id});
+      res.json({ name, email, _id });
     });
   } else {
     res.json(null);
@@ -90,62 +90,56 @@ app.get('/profile', (req, res) => {
 });
 
 app.post('/upload-by-link', async (req, res) => {
-  const {link} = req.body;
+  const { link } = req.body;
   const newName = 'photo' + Date.now() + '.jpg';
   await imageDownloader.image({
     url: link,
-    dest: __dirname+'/uploads/' + newName,
+    dest: __dirname + '/uploads/' + newName,
 
   });
   res.json(newName);
-})
+});
 
-app.post('/logout',(req,res) => {
-    res.cookie('token','').json(true);
-  });
+app.post('/logout', (req, res) => {
+  res.cookie('token', '').json(true);
+});
 
-const photosMiddleware = multer({dest:'uploads'});
-app.post('/upload', photosMiddleware.array('photos',100), (req, res) => {
+const photosMiddleware = multer({ dest: 'uploads' });
+app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
   const uploadedFiles = [];
- for (let i = 0; i < req.files.length; i++)
-{
-  const {path, originalname} = req.files[i];
-  const parts = originalname.split('.');
-  const ext = parts[parts.length - 1];
-  const newPath = path + '.' + ext;
+  for (let i = 0; i < req.files.length; i++) {
+    const { path, originalname } = req.files[i];
+    const parts = originalname.split('.');
+    const ext = parts[parts.length - 1];
+    const newPath = path + '.' + ext;
 
-  fs.renameSync(path, newPath);
-  uploadedFiles.push(newPath.replace('uploads/', ''));
-}
-res.json(uploadedFiles);
+    fs.renameSync(path, newPath);
+    uploadedFiles.push(newPath.replace('uploads/', ''));
+  }
+  res.json(uploadedFiles);
 
-})
+});
 
 
 app.post('/places', (req, res) => {
   const { token } = req.cookies;
-  const {title, address, addedPhoto, description, price, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
+  const { title, address, addedPhotos, description, price, perks, extraInfo, checkIn, checkOut, maxGuests } = req.body;
   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
     if (err) throw err;
-    const placeDoc = await Place.create({
-      owner:userData.id, price,
-      title, address, photos:addedPhoto, description, perks,
-      extraInfo, checkIn, checkOut, maxGuests
-
-    });
 
     try {
       const placeDoc = await Place.create({
         owner: userData.id,
         title,
         address,
-        photos: addedPhoto,
+        photos: addedPhotos,
         description,
         perks,
         extraInfo,
         checkIn,
         checkOut,
-        maxGuests
+        maxGuests,
+        price
       });
 
       res.json(placeDoc);// previous part run up to here
@@ -165,29 +159,39 @@ app.post('/places', (req, res) => {
 // });
 
 
-app.get('/places/:id', async (req,res) => { //Silvia
-    const {id} = req.params;
-    res.json(await Place.findById(id));
+app.get('/places/:id', async (req, res) => { //Silvia
+  const { id } = req.params;
+  res.json(await Place.findById(id));
 });
 
 app.get('/user-places', (req, res) => {
   const { token } = req.cookies;
   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-    const {id} = userData;
-    res.json( await Place.find({owner:id}));
-  })
+    const { id } = userData;
+    res.json(await Place.find({ owner: id }));
+  });
 });
 
-app.put('/places', async (req, res) => {
+app.put('/places/:id', async (req, res) => {
   const { token } = req.cookies;
-  const {id, title, address, addedPhoto, description, price, perks, extraInfo, checkIn, checkOut, maxGuests} = req.body;
+  const { id } = req.params;
+  const { title, address, addedPhotos, description, price, perks, extraInfo, checkIn, checkOut, maxGuests } = req.body;
   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
+
     if (err) throw err;
     const placeDoc = await Place.findById(id);
     if (userData.id === placeDoc.owner.toString()) {
       placeDoc.set({
-        title,address,photos:addedPhotos,description,
-        perks,extraInfo,checkIn,checkOut,maxGuests,price,
+        title, 
+        address, 
+        photos: addedPhotos, 
+        description,
+        perks, 
+        extraInfo, 
+        checkIn, 
+        checkOut, 
+        maxGuests, 
+        price,
       });
       await placeDoc.save();
       res.json('ok');
@@ -195,11 +199,11 @@ app.put('/places', async (req, res) => {
   });
 
 
-})
+});
 //end points for index page
 app.get('/places', async (req, res) => {
   res.json(await Place.find());
-})
+});
 
 
 app.listen(4000, () => {
