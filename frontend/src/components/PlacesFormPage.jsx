@@ -53,7 +53,7 @@ const PlacesFormPage = () => {
     return <p className="text-gray-500 text-sm">{text}</p>;
   };
 
-  const inputValue = (header, description) => { //this function is different name from previous step
+  const inputValue = (header, description) => { 
     return (
       <>
         {inputHeader(header)}
@@ -62,7 +62,7 @@ const PlacesFormPage = () => {
     );
   };
 
-  async function SavePlace(e) {// Silvia ev
+  async function SavePlace(e) {
     e.preventDefault();
     await axios.post("/places",{
       title,
