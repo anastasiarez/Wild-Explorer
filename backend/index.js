@@ -143,10 +143,51 @@ app.post('/places', (req, res) => {
         maxGuests
       });
 
-      res.json(placeDoc);
+      res.json(placeDoc);// previous part run up to here 
     } catch (error) {
       console.error('Error creating place:', error);
       res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
+});
+
+// app.get('/places',(req,res) =>{ // missing part from previous step
+//     const {token} = req.cookies;
+//     jsonWebToken.verify(token,jwtSecret,{}, async (err,userData)=>{
+//         const{id} = userData;
+//         res.json(await Place.find({owner:id}));
+//     });
+// });
+
+
+app.get('/places/:id', async (req,res) => { //Silvia
+    const {id} = req.params;
+    res.json(await Place.findById(id));
+});
+
+app.put('/places', async (req,res) => { //Silvia 
+  const { token } = req.cookies;
+  const { id,title, address, addedPhoto, description, perks, extraInfo, checkIn, checkOut, maxGuests } = req.body;
+  
+  jsonWebToken.verify(token,jwtSecret,{}, async (err,userData)=>{
+    if (err) throw err;
+    const placeDoc = await Place.findById(id);
+    if (userData.id === placeDoc.owner.toString()){
+        placeDoc.set({
+            title,
+            address,
+            photos: addedPhoto,
+            description,
+            perks,
+            extraInfo,
+            checkIn,
+            checkOut,
+            maxGuests
+          })
+        await placeDoc.save();
+        res.json('ok');
+
+      
     }
   });
 });
