@@ -65,7 +65,7 @@ const PlacesPage = () => {
                   {place.description}
                 </p>
                 <p className="text-gray-700 text-sm leading-snug mb-4">
-                  {place.perks}
+                  {place.perks.join(", ")}
                 </p>
                 <p className="text-gray-700 text-sm leading-snug mb-4">
                   ${place.price}
