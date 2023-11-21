@@ -18,10 +18,10 @@ const PlacesPage = () => {
     <div>
       <AccountNav />
 
-      <div className="text-center">
+      <div className="text-center mt-6">
         <Link
-          className="inline-flex gap-1 bg-primary text-white py-2 px-6 rounded-full"
-          to={"/account/places/new"}
+          className="inline-flex items-center gap-1 bg-primary text-white py-2 px-6 rounded-full"
+          to="/account/places/new"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -40,28 +40,36 @@ const PlacesPage = () => {
           Add new place
         </Link>
       </div>
-
-      <div className="mt-4">
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {places.length === 0 ? (
           <p>Loading...</p>
         ) : (
           places.map((place) => (
             <Link
+              key={place._id}
               to={{ pathname: "/account/places/" + place._id }}
-              className="flex cursor-pointer gap-4 bg-gray-100 p-4 rounded-2xl"
+              className="flex flex-col overflow-hidden bg-white rounded-lg shadow-lg transition transform hover:scale-105"
             >
-              <div className="w-32 h-32 bg-gray-300 grow shrink-0">
+              <div className="w-full h-40 overflow-hidden">
                 {place.photos.length > 0 && (
                   <img
-                    className="object-cover"
+                    className="w-full h-full object-cover"
                     src={"http://localhost:4000/uploads/" + place.photos[0]}
                     alt=""
                   />
                 )}
               </div>
-              <div className="grow-0 shrink">
-                <h2 className="text-xl">{place.title}</h2>
-                <p className="text-sm mt-2">{place.description}</p>
+              <div className="p-4">
+                <h2 className="text-xl font-semibold mb-2">{place.title}</h2>
+                <p className="text-gray-700 text-sm leading-snug mb-4">
+                  {place.description}
+                </p>
+                <Link
+                  to={{ pathname: "/account/places/" + place._id }}
+                  className="text-primary hover:underline"
+                >
+                  View Details
+                </Link>
               </div>
             </Link>
           ))
@@ -70,5 +78,6 @@ const PlacesPage = () => {
     </div>
   );
 };
+
 
 export default PlacesPage;
