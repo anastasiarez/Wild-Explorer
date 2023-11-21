@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AccountNav from "../AccountNav";
 import { Navigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -6,10 +6,7 @@ import PhotoUploader from "../PhotoUploader";
 import Perks from "../Perks";
 import axios from "axios";
 
-
-
 const PlacesFormPage = () => {
-    //states
   const { id } = useParams();
   const [title, setTitle] = useState("");
   const [address, setAddress] = useState("");
@@ -23,12 +20,13 @@ const PlacesFormPage = () => {
   const [redirectToPlacesList, setRedirectToPlacesList] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const [price, setPrice] = useState(100);
+
   useEffect(() => {
-    if(!id){
+    if (!id) {
       return;
     }
-    axios.get('/places/'+id).then(response => {
-      const {data} = response;
+    axios.get('/places/' + id).then(response => {
+      const { data } = response;
       setTitle(data.title);
       setAddress(data.address);
       setAddedPhotos(data.photos);
@@ -39,45 +37,29 @@ const PlacesFormPage = () => {
       setCheckOut(data.checkOut);
       setMaxGuests(data.maxGuests);
       setPrice(data.price);
-   });
- }, [id]);
-
-
-
-  //helper functions
-  const inputHeader = (text) => {
-    return <h2 className="text-xl mt-4">{text}</h2>;
-  };
-
-  const inputDescription = (text) => {
-    return <p className="text-gray-500 text-sm">{text}</p>;
-  };
-
-  const inputValue = (header, description) => { 
-    return (
-      <>
-        {inputHeader(header)}
-        {inputDescription(description)}
-      </>
-    );
-  };
-
-  async function SavePlace(e) {
-    e.preventDefault();
-    if (id){
-      await axios.put(`/places/${id}`,{
-      title,
-      address,
-      description,
-      addedPhotos,
-      checkIn,
-      checkOut,
-      extraInfo,
-      maxGuests, 
-      price,
     });
-    } else {
-      await axios.post("/places",{
+  }, [id]);
+
+  const inputHeader = (text) => (
+    <h2 className="text-xl mt-4">{text}</h2>
+  );
+
+  const inputDescription = (text) => (
+    <p className="text-gray-500 text-sm mt-1 mb-4">{text}</p>
+  );
+
+  const inputValue = (header, description, inputField) => (
+    <div className="mb-6">
+      {inputHeader(header)}
+      {inputDescription(description)}
+      {inputField}
+    </div>
+  );
+
+  const SavePlace = async (e) => {
+    e.preventDefault();
+    if (id) {
+      await axios.put(`/places/${id}`, {
         title,
         address,
         description,
@@ -85,115 +67,140 @@ const PlacesFormPage = () => {
         checkIn,
         checkOut,
         extraInfo,
-        maxGuests, 
+        maxGuests,
+        price,
+      });
+    } else {
+      await axios.post("/places", {
+        title,
+        address,
+        description,
+        addedPhotos,
+        checkIn,
+        checkOut,
+        extraInfo,
+        maxGuests,
         price,
       });
     }
-    
-    
+
     setRedirect(true);
+  };
 
-
+  if (redirect) {
+    return <Navigate to={'/account/places'} />;
   }
-  if(redirect){
-    return <Navigate to={'/account/places'}/>
-  }
-    return (
-        <div>
-          <AccountNav />
-          <form onSubmit={SavePlace}>
-            {inputValue("Title", "")}
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="title, for example: my lovely apartment"/>
 
-            {inputValue("Address")}
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="address"/>
+  return (
+    <div>
+      <AccountNav />
+      <form onSubmit={SavePlace} className="max-w-3xl mx-auto mt-8">
+        {inputValue("Title", "", (
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Title, e.g., My Lovely Apartment"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+          />
+        ))}
 
-            {inputValue("Photo")}
-            <PhotoUploader
-              addedPhotos={addedPhotos}
-              onChange={setAddedPhotos}/>
+        {inputValue("Address", "", (
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="Address"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+          />
+        ))}
 
-            {inputValue("Description")}
-            <br></br>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}/>
+        {inputValue("Photo", "", (
+          <PhotoUploader
+            addedPhotos={addedPhotos}
+            onChange={setAddedPhotos}
+          />
+        ))}
 
-            {inputValue("Perks")}
-            <br></br>
-            <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-              <Perks selected={perks} onChange={setPerks} />
-            </div>
-            <br></br>
+        {inputValue("Description", "", (
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Description"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+          />
+        ))}
 
-            {inputValue("Extra info & Rules")}
-            <br></br>
-            <textarea
-              value={extraInfo}
-              onChange={(e) => setExtraInfo(e.target.value)}
-            />
-
-            {inputValue(
-              "Check-in & Check-out Time"
-            )}
-            <br></br>
-
-            <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
-              <div>
-                <h3 className="mt-2 -mb-1">Check-in time</h3>
-                <input
-                  type="text"
-                  value={checkIn}
-                  onChange={(e) => setCheckIn(e.target.value)}
-                  placeholder="12"
-                />
-              </div>
-              <div>
-                <h3 className="mt-2 -mb-1">Check-out time</h3>
-                <input
-                  type="text"
-                  value={checkOut}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  placeholder="11"
-                />
-              </div>
-              <div>
-                <h3 className="mt-2 -mb-1">Max number of guests</h3>
-                <input
-                  type="number"
-                  value={maxGuests}
-                  onChange={(e) => setMaxGuests(e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-                <h3 className="mt-2 -mb-1">Price per night</h3>
-                <input
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}/>
-              </div>
-            <div>
-              <br></br>
-              <br></br>
-              <button className="bg-secondary px-16 py-2 rounded-2xl">
-                Save
-              </button>
-            </div>
-          </form>
+        {inputValue("Perks", "", (
+          <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+            <Perks selected={perks} onChange={setPerks} />
           </div>
+        ))}
 
+        {inputValue("Extra info & Rules", "", (
+          <textarea
+            value={extraInfo}
+            onChange={(e) => setExtraInfo(e.target.value)}
+            placeholder="Extra info & Rules"
+            className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+          />
+        ))}
 
-    );
+        {inputValue(
+          "Check-in & Check-out Time", "",
+          <div className="grid gap-2 sm:grid-cols-2 md:grid-cols-4">
+            <div>
+              <h3 className="mt-2 -mb-1">Check-in time</h3>
+              <input
+                type="text"
+                value={checkIn}
+                onChange={(e) => setCheckIn(e.target.value)}
+                placeholder="12"
+                className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <h3 className="mt-2 -mb-1">Check-out time</h3>
+              <input
+                type="text"
+                value={checkOut}
+                onChange={(e) => setCheckOut(e.target.value)}
+                placeholder="11"
+                className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div>
+              <h3 className="mt-2 -mb-1">Max number of guests</h3>
+              <input
+                type="number"
+                value={maxGuests}
+                onChange={(e) => setMaxGuests(e.target.value)}
+                className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+        )}
 
-}
+        {inputValue("Price per night", "", (
+          <div>
+            <h3 className="mt-2 -mb-1">Price per night</h3>
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
+            />
+          </div>
+        ))}
+
+        <div className="mt-8">
+          <button className="bg-secondary px-8 py-3 rounded-full text-white hover:bg-opacity-80 focus:outline-none">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
 
 export default PlacesFormPage;

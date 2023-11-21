@@ -15,7 +15,6 @@ const Place = require('./models/Place.js');
 const PlaceModel = require("./models/Place.js");
 
 
-
 const app = express();
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(express.json());
@@ -74,6 +73,10 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/logout', (req, res) => {
+  res.cookie('token', '').json(true);
+});
+
 
 app.get('/profile', (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -89,6 +92,7 @@ app.get('/profile', (req, res) => {
   }
 });
 
+//download images from the web to a local destination
 app.post('/upload-by-link', async (req, res) => {
   const { link } = req.body;
   const newName = 'photo' + Date.now() + '.jpg';
@@ -100,10 +104,8 @@ app.post('/upload-by-link', async (req, res) => {
   res.json(newName);
 });
 
-app.post('/logout', (req, res) => {
-  res.cookie('token', '').json(true);
-});
 
+// to store files locally
 const photosMiddleware = multer({ dest: 'uploads' });
 app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
   const uploadedFiles = [];
@@ -112,14 +114,12 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
     const parts = originalname.split('.');
     const ext = parts[parts.length - 1];
     const newPath = path + '.' + ext;
-
+    
     fs.renameSync(path, newPath);
     uploadedFiles.push(newPath.replace('uploads/', ''));
   }
   res.json(uploadedFiles);
-
 });
-
 
 app.post('/places', (req, res) => {
   const { token } = req.cookies;
@@ -150,34 +150,18 @@ app.post('/places', (req, res) => {
   });
 });
 
-// app.get('/places',(req,res) =>{ // missing part from previous step
-//     const {token} = req.cookies;
-//     jsonWebToken.verify(token,jwtSecret,{}, async (err,userData)=>{
-//         const{id} = userData;
-//         res.json(await Place.find({owner:id}));
-//     });
-// });
-
-
-app.get('/places/:id', async (req, res) => { //Silvia
+app.get('/places/:id', async (req, res) => {
   const { id } = req.params;
   res.json(await Place.findById(id));
 });
 
-app.get('/user-places', (req, res) => {
-  const { token } = req.cookies;
-  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-    const { id } = userData;
-    res.json(await Place.find({ owner: id }));
-  });
-});
 
 app.put('/places/:id', async (req, res) => {
   const { token } = req.cookies;
   const { id } = req.params;
   const { title, address, addedPhotos, description, price, perks, extraInfo, checkIn, checkOut, maxGuests } = req.body;
   jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-
+    
     if (err) throw err;
     const placeDoc = await Place.findById(id);
     if (userData.id === placeDoc.owner.toString()) {
@@ -197,9 +181,18 @@ app.put('/places/:id', async (req, res) => {
       res.json('ok');
     }
   });
-
-
 });
+
+app.get('/user-places', (req, res) => {
+  const { token } = req.cookies;
+  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
+    const { id } = userData;
+    res.json(await Place.find({ owner: id }));
+  });
+});
+
+
+
 //end points for index page
 app.get('/places', async (req, res) => {
   res.json(await Place.find());

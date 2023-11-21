@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 
 const IndexPage = () => {
   const [places, setPlaces] = useState([]);
+  
   useEffect(() => {
     axios.get("/places").then((response) => {
       setPlaces(response.data);
@@ -12,25 +13,28 @@ const IndexPage = () => {
   }, []);
 
   return (
-    <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-
+    <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {places.length > 0 &&
         places.map((place) => (
-          <div>
-            <div className="bg-gray-500 mb-2 rounded-2xl flex">
-              {place.photos?.[0] && (
-                <img
-                className="rounded-2xl object-cover aspect-square w-full h-auto"
-                src={"http://localhost:4000/uploads/" + place.photos?.[0]}
-                alt=""
-              />
-              )}
-            </div>
-
-            <h2 className="font-bold ">{place.address}</h2>
-            <h3 className="text-sm text-gray-500">{place.title}</h3>
-            <div className="mt-1">
-              <span className="font-bold">${place.price}</span>per night
+          <div key={place._id} className="grid-item">
+            <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+              <div className="aspect-w-3 aspect-h-2">
+                {place.photos?.[0] && (
+                  <img
+                    className="object-cover w-full h-full"
+                    src={"http://localhost:4000/uploads/" + place.photos?.[0]}
+                    alt=""
+                  />
+                )}
+              </div>
+              <div className="p-4">
+                <h2 className="text-xl font-semibold mb-2">{place.address}</h2>
+                <h3 className="text-sm text-gray-500 mb-2">{place.title}</h3>
+                <div className="flex flex-col items-center justify-between">
+                  <span className="font-bold">${place.price}</span>
+                  <span className="text-gray-500 text-sm">per night</span>
+                </div>
+              </div>
             </div>
           </div>
         ))}
