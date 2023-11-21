@@ -16,7 +16,7 @@ const IndexPage = () => {
     <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {places.length > 0 &&
         places.map((place) => (
-          <div key={place._id} className="grid-item">
+            <Link to={'/place/'+place._id}>
             <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
               <div className="aspect-w-3 aspect-h-2">
                 {place.photos?.[0] && (
@@ -36,7 +36,7 @@ const IndexPage = () => {
                 </div>
               </div>
             </div>
-          </div>
+            </Link>
         ))}
     </div>
   );
