@@ -2,6 +2,7 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import BookingWidget from "../BookingWidget";
+import Search from "../Search";
 
 
 
@@ -9,6 +10,7 @@ export default function PlacePage() {
     const { id } = useParams();
     const [place, setPlace] = useState(null);
     const [showAllPhotos, setShowAllPhotos] = useState(false);
+    const [filteredPlaces, setFilteredPlaces] = useState([]);
 
     useEffect(() => {
         if (!id) {
@@ -19,7 +21,16 @@ export default function PlacePage() {
         });
     }, [id]);
 
+    const handleSearch = async (searchResults) => {
+
+        setFilteredPlaces(searchResults);
+    };
+
     if (!place) return '';
+
+    if (filteredPlaces.length > 0) {
+        <Search onSearch={handleSearch} />
+    }
 
     if (showAllPhotos) {
 

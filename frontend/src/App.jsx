@@ -10,6 +10,7 @@ import PlacesPage from "./components/PlacesPage";
 import ProfilePage from "./components/ProfilePage";
 import PlacesFormPage from "./components/PlacesFormPage";
 import PlacePage from "./components/PlacePage";//Silvia
+import Search from "./Search";
 
 axios.defaults.baseURL = "http://localhost:4000/";
 axios.defaults.withCredentials = true;
@@ -22,6 +23,7 @@ function App() {
                     <Route index element={<IndexPage />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/register" element={<RegisterPage />} />
+                    <Route path="/search-results" element={<Search />} />
 
                     <Route path="/account" element={<ProfilePage />} />
                     <Route path="/account/bookings" element={<PlacesPage />} />
