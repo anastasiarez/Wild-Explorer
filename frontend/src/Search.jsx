@@ -1,13 +1,12 @@
 import React from "react";
 import { useState } from "react";
-import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const Search = ({ onSearch }) => {
+const Search = ({ onSearch, setSearchResults }) => {
 
   const [wordSearch, setWordSearch] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+
 
   const handleSearchInput = (event) => {
     setWordSearch(event.target.value);
@@ -42,7 +41,7 @@ const Search = ({ onSearch }) => {
           onChange={handleSearchInput}
         />
       </div>
-      <div className="mt-2">
+      <div>
         <button type="button"
           className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-80 focus:outline-none"
           onClick={handleSearchSubmit}>Search

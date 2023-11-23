@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { UserContext } from "./UserContext.jsx";
 import Search from "./Search.jsx";
 
-const Header = ({ onSearch }) => {
+const Header = ({ onSearch,  setSearchResults }) => {
   const { user } = useContext(UserContext);
   return (
     <>
@@ -11,7 +11,7 @@ const Header = ({ onSearch }) => {
         {/* LOGO */}
 
         <header className="p-4 flex flex-col">
-          <div id="logo_menue" className="flex justify-between">
+          <div id="logo_menue" className="flex justify-between mb-5">
             <a href="/" className="flex items-center gap-1">
               <img src="/logo.png" alt="Logo" className="w-30 h-20 mr-0" />
             </a>
@@ -49,7 +49,7 @@ const Header = ({ onSearch }) => {
             </Link>
           </div>
           <div id="searchbar">
-            <Search onSearch={onSearch} />
+            <Search onSearch={onSearch} setSearchResults={setSearchResults} />
 
           </div>
         </header>

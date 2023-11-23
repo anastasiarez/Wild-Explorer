@@ -3,14 +3,16 @@ import Header from "./Header";
 import { useState } from "react";
 import Search from "./Search";
 
-const Layout = () => {
+const Layout = ({setSearchResults}) => {
   const [searchData, SetSearchData] = useState([]);
+
   const handleSearch = (newSearchData) => {
     SetSearchData(newSearchData);
   };
+
   return (
     <div className="py-4 px-8 flex flex-col min-h-screen">
-      <Header onSearch={handleSearch} />
+      <Header onSearch={handleSearch} setSearchResults={setSearchResults} />
       <Outlet />
     </div>
   );

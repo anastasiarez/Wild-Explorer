@@ -3,9 +3,9 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import Search from "../Search";
 
-const IndexPage = () => {
+const IndexPage = ({searchResults}) => {
   const [places, setPlaces] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
+
 
   useEffect(() => {
     axios.get("/places").then((response) => {
@@ -13,13 +13,17 @@ const IndexPage = () => {
     });
   }, []);
 
-  const handleSearchResults = (newSearchResults) => {
-    setSearchResults(newSearchResults);
-  };
+//   useEffect(() => {
+//     console.log("HERE", searchResults);
+
+//   }, [searchResults])
+
+console.log("HERE", searchResults);
+
 
   return (
     <div>
-      
+
 
       <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {searchResults.length > 0 ? (
