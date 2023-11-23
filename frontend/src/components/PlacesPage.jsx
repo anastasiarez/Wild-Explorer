@@ -3,7 +3,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import AccountNav from "../AccountNav";
 import axios from "axios";
 
-const PlacesPage = () => {
+const PlacesPage = ({setPropertyId}) => {
     const [places, setPlaces] = useState([]);
 
     useEffect(() => {
@@ -11,6 +11,11 @@ const PlacesPage = () => {
             setPlaces(data);
         });
     }, [axios]);
+
+     // Function to handle property selection
+  const handlePropertyClick = (propertyId) => {
+    setPropertyId(propertyId);
+  };
 
 
     return (
@@ -47,6 +52,7 @@ const PlacesPage = () => {
                         <Link
                             key={place._id}
                             to={{ pathname: "/account/places/" + place._id }}
+                            onClick={() => handlePropertyClick(place._id)} 
                             className="flex flex-col overflow-hidden bg-white rounded-lg shadow-lg transition transform hover:scale-105"
                         >
                             <div className="w-full h-40 overflow-hidden">
