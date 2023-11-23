@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import Review from './Review';
-// import { getReviewsForProperty } from '../api'; // Import the API function to fetch reviews
+import { getReviewsForProperty } from '../helpers/reviewsApi';
+import { useParams } from 'react-router-dom';
 
-const ReviewList = ({ propertyId }) => {
+
+
+const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { id: propertyId } = useParams();
 
   useEffect(() => {
+    // Fetch reviews when `propertyId` changes
     const fetchReviews = async () => {
       try {
-        const response = await getReviewsForProperty(propertyId);
-        setReviews(response.data);
+        const fetchedReviews = await getReviewsForProperty(propertyId);
+        setReviews(fetchedReviews);
+        // (handle setting loading and error state)
       } catch (error) {
-        console.error('Error fetching reviews:', error);
+        // (handle the error)
       }
     };
 
     fetchReviews();
   }, [propertyId]);
-
   if (loading) {
     return <p>Loading reviews...</p>;
   }

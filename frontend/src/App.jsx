@@ -1,5 +1,6 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import IndexPage from "./components/IndexPage";
 import LoginPage from "./components/LoginPage";
 import Layout from "./Layout";
@@ -38,13 +39,15 @@ function App() {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
           <Route path="/account/bookings" element={<PlacesPage />} />
+          <Route path="/account/places" element={<PlacesPage setPropertyId={setPropertyId}/>}/>
           <Route
-            path="/account/places"
+            path="/property-reviews/:id"
             element={
               <div>
-                <ReviewList propertyId={propertyId} />
-                <PlacesPage setPropertyId={setPropertyId} />
+                <ReviewList />
+                <PlacesPage />
               </div>}/>
+
 
           <Route path="/account/places" element={<PlacesPage />} />
           <Route path="/account/places/new" element={<PlacesFormPage />} />
@@ -52,7 +55,11 @@ function App() {
           <Route path="/place/:id" element={<PlacePage />} />
           <Route path="/account/bookings" element={<BookingsPage />} />
           <Route path="/account/bookings/:id" element={<BookingPage />} />
-          <Route path="/reviews/:id" element={<Review />} />
+          <Route
+            path="/property-reviews/:id"
+            element={<ReviewList />}
+          />
+
         </Route>
       </Routes>
     </UserContextProvider>
@@ -61,3 +68,8 @@ function App() {
 }
 
 export default App;
+
+{/* <Route
+            path="/place/:id"
+            element={<PlacePage setPropertyId={setPropertyId} />}
+          /> */}
