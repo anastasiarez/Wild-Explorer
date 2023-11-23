@@ -26,11 +26,19 @@ app.use(
     })
 );
 
+// Move the database connection outside of the route handlers
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
     useFindAndModify: false,
+});
+
+const db = mongoose.connection;
+
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
+db.once('open', () => {
+    console.log('Connected to MongoDB');
 });
 
 app.post("/register", async (req, res) => {
@@ -191,6 +199,30 @@ app.get('/user-places', (req, res) => {
     });
 });
 
+app.get('/search-places', async (req, res) => {
+    try {
+        const { query } = req.query;
+
+        if (!query) {
+            return res.status(400).json({ error: 'Search query is missing.' });
+        }
+
+
+
+
+        const properties = await Place.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { address: { $regex: query, $options: 'i' } },
+            ],
+        });
+
+        res.json(properties);
+    } catch (error) {
+        console.error("Error", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
 
 
 //end points for index page
