@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { UserContext } from "./UserContext.jsx";
 import Search from "./Search.jsx";
 
-const Header = ({ onSearch,  setSearchResults }) => {
+const Header = ({ onSearch,  setSearchResults, setSearchButtonClick }) => {
   const { user } = useContext(UserContext);
   return (
     <>
@@ -49,7 +49,7 @@ const Header = ({ onSearch,  setSearchResults }) => {
             </Link>
           </div>
           <div id="searchbar">
-            <Search onSearch={onSearch} setSearchResults={setSearchResults} />
+            <Search onSearch={onSearch} setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick} />
 
           </div>
         </header>

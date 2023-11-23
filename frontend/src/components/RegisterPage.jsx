@@ -32,7 +32,7 @@ const RegisterPage = () => {
 
             // Log in the user after successful registration
             const loginData = await axios.post("/login", { email, password });
-            console.log("Server Response:", loginData);
+          
 
             setRedirect(true);
         } catch (error) {

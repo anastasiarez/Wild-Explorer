@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const Search = ({ onSearch, setSearchResults }) => {
+const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
 
   const [wordSearch, setWordSearch] = useState("");
 
@@ -13,6 +13,7 @@ const Search = ({ onSearch, setSearchResults }) => {
   };
 
   const handleSearchSubmit = async () => {
+    setSearchButtonClick(true);
     try {
       const searchTerm = `query=${encodeURIComponent(wordSearch)}`;
       const response = await fetch(`/search-places?${searchTerm}`);
@@ -22,7 +23,7 @@ const Search = ({ onSearch, setSearchResults }) => {
       }
 
       const data = await response.json();
-      console.log('Search Results:', data);
+    
       setSearchResults(data); // Assuming data is an array of properties
       onSearch(data)
     } catch (error) {

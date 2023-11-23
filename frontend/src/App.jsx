@@ -18,15 +18,16 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
+  const [searchButtonClick, setSearchButtonClick] = useState(false);
 
   return (
     <UserContextProvider>
       <Routes>
         <Route
           path="/"
-          element={<Layout setSearchResults={setSearchResults} />}
+          element={<Layout setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick} />}
         >
-          <Route index element={<IndexPage searchResults={searchResults} />} />
+          <Route index element={<IndexPage searchResults={searchResults} searchButtonClick={searchButtonClick} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 

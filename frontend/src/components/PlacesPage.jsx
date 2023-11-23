@@ -12,7 +12,6 @@ const PlacesPage = () => {
         });
     }, [axios]);
 
-    console.log("Places:", places); 
 
     return (
         <div>
