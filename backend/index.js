@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const User = require("./models/User.js");
+
 const bcrypt = require('bcryptjs');
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jsonWebToken = require('jsonwebtoken');
@@ -11,8 +11,10 @@ require("dotenv").config();
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
+const User = require("./models/User.js");
 const Place = require('./models/Place.js');
 const PlaceModel = require("./models/Place.js");
+const Booking = require('./models/Booking.js');
 
 
 const app = express();
@@ -41,6 +43,17 @@ db.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
+function getUserDataFromReq(req) {
+    return new Promise((resolve, reject) => {
+        jsonWebToken.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+            if (err) throw err;
+            resolve(userData);
+        });
+    });
+}
+
+
+
 app.post("/register", async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
     const { name, email, password } = req.body;
@@ -68,7 +81,6 @@ app.post('/login', async (req, res) => {
             jsonWebToken.sign({
                 email: userDoc.email,
                 id: userDoc._id,
-                //user_name: userDoc.user_name
             }, jwtSecret, {}, (err, token) => {
                 if (err) throw err;
                 res.cookie('token', token).json(userDoc);
@@ -228,6 +240,31 @@ app.get('/search-places', async (req, res) => {
 //end points for index page
 app.get('/places', async (req, res) => {
     res.json(await Place.find());
+});
+
+
+
+app.post('/bookings', async (req, res) => {
+    const userData = await getUserDataFromReq(req);
+        const {
+        place, checkIn, checkOut, numberOfGuests, name, phone, price,
+    } = req.body;
+    Booking.create({
+        place, checkIn, checkOut, numberOfGuests, name, phone, price,
+        user:userData.id,
+    }).then((doc) => {
+        res.json(doc);
+    }).catch((err) => {
+        throw err;
+    });
+});
+
+
+
+
+app.get('/bookings', async (req, res) => {
+    const userData = await getUserDataFromReq(req);
+   res.json( await Booking.find({user:userData.id}).populate('place'));
 });
 
 
