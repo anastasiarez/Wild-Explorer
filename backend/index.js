@@ -10,17 +10,26 @@ require("dotenv").config();
 const imageDownloader = require("image-downloader");
 const multer = require("multer");
 const fs = require("fs");
-const User = require("./models/User.js");
+
 const Place = require("./models/Place.js");
-const PlaceModel = require("./models/Place.js");
-const Booking = require("./models/Booking.js");
+
+
 const Review = require("./models/Review.js");
 const reviewsRouter = express.Router();
+
+const testRouter = require('./routes/test.js');
+const booking = require("./routes/booking.js");
+const user = require("./routes/user.js");
+
+
+
 
 // Routes
 const app = express();
 app.use("/reviews", reviewsRouter);
 app.use("/uploads", express.static(__dirname + "/uploads"));
+
+//middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -29,6 +38,8 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
+
+
 
 
 
@@ -46,6 +57,29 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 db.once("open", () => {
   console.log("Connected to MongoDB");
 });
+
+const jwtmiddleWare = (req, res, next) => {
+console.log("inside jwtmiddleware");
+  if (!req.cookies || !req.cookies.token) {
+    return res.status(401).json({ error: "Unauthorized, no valid token provided" });
+  }
+  jsonWebToken.verify(
+    req.cookies.token,
+    jwtSecret,
+    {},
+    async (err, userData) => {
+      if (err) {
+        // Properly reject the promise if an error occurred during verification
+        return res.status(401).json({ error: err.message});
+      }
+      res.locals.userData = userData;
+      console.log("inside jwtmiddleware verified.");
+      next();
+    }
+  );
+
+
+}
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
@@ -69,71 +103,18 @@ function getUserDataFromReq(req) {
   });
 }
 
+////////  BOOKINGS  ///////////
+
+//end points for test page
+//app.use('/screen', jwtmiddleWare, testRouter);
+app.use('/bookings', jwtmiddleWare, booking);
+
 
 ////////  REGISTER, LOGIN/LOGOUT & PROFILE  ///////////
+app.use('/user', jwtmiddleWare, user);
 
 
-app.post("/register", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { name, email, password } = req.body;
 
-  try {
-    const userDoc = await User.create({
-      name,
-      email,
-      password: bcrypt.hashSync(password, bcryptSalt),
-    });
-    res.json({ userDoc });
-  } catch (e) {
-    res.status(422).json(e);
-  }
-});
-
-app.post("/login", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email, password } = req.body;
-  const userDoc = await User.findOne({ email });
-
-  if (userDoc) {
-    const passwordOK = bcrypt.compareSync(password, userDoc.password);
-    if (passwordOK) {
-      jsonWebToken.sign(
-        {
-          email: userDoc.email,
-          id: userDoc._id,
-        },
-        jwtSecret,
-        {},
-        (err, token) => {
-          if (err) throw err;
-          res.cookie("token", token).json(userDoc);
-        }
-      );
-    } else {
-      res.status(422).json("password is not ok");
-    }
-  } else {
-    res.json("not found");
-  }
-});
-
-app.post("/logout", (req, res) => {
-  res.cookie("token", "").json(true);
-});
-
-app.get("/profile", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { token } = req.cookies;
-  if (token) {
-    jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-      if (err) throw err;
-      const { name, email, _id } = await User.findById(userData.id);
-      res.json({ name, email, _id });
-    });
-  } else {
-    res.json(null);
-  }
-});
 
 ////////  UPLOAD IMG-S  ///////////
 
@@ -288,90 +269,28 @@ app.get('/places', async (req, res) => {
   res.json(await Place.find());
 });
 
-////////  BOOKINGS  ///////////
-
-//end points for index page
-
-app.post("/bookings", async (req, res) => {
-
-  const userData = await getUserDataFromReq(req);
-  const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
-    req.body;
-  Booking.create({
-    place,
-    checkIn,
-    checkOut,
-    numberOfGuests,
-    name,
-    phone,
-    price,
-    user: userData.id,
-  })
-    .then((doc) => {
-      res.json(doc);
-    })
-    .catch((err) => {
-      throw err;
-    });
-});
 
 
-app.post('/bookings/:bookingId', async (req, res) => {
-  const userData = await getUserDataFromReq(req);
-  const {
-    checkIn,
-    checkOut,
-    // place,
-    // numberOfGuests,
-    // name,
-    // phone,
-    // price,
-  } = req.body;
 
-  Booking.updateOne({user:userData.id},
-    {
-    checkIn,
-    checkOut,
-    // place,
-    // numberOfGuests,
-    // name,
-    // phone,
-    // price,
-    // user: userData.id,
-  }).then((doc) => {
-    res.json(doc);
-  }).catch((err) => {
-    throw err;
-  });
-});
-
-app.get("/bookings", async (req, res) => {
-  const userData = await getUserDataFromReq(req);
-  res.json(await Booking.find({ user: userData.id }).populate("place"));
-});
-
-app.get('/bookings/:placeId', async (req, res) => {
-
-  res.json(await Booking.find({ place: req.params.placeId }));
-});
 
 // Create a new review
-app.post("/reviews", async (req, res) => {
+app.post("/reviews", jwtmiddleWare, async (req, res) => {
   try {
     const { property, rating, comment } = req.body;
-    let userData = null;
+    // let userData = null;
+    const userData = res.locals.userData;
 
 
-    try {
-      userData = await getUserDataFromReq(req);
-    } catch (error) {
-      return res.status(401).json({ error: "Unauthorized, no valid token provided" });
-    }
+    // try {
+    //   userData = await getUserDataFromReq(req);
+    // } catch (error) {
+    //   return res.status(401).json({ error: "Unauthorized, no valid token provided" });
+    // }
 
     // Check if the user is authenticated
-    if (!userData) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
+    // if (!userData) {
+    //   return res.status(401).json({ error: "Unauthorized" });
+    // }
 
     // Use Review.create to directly create and save the review in the database
     const savedReview = await Review.create({
@@ -406,16 +325,18 @@ app.get("/property/:propertyId", async (req, res) => {
   }
 });
 
-app.patch('/:reviewId', async (req, res) => {
+app.patch('/:reviewId', jwtmiddleWare, async (req, res) => {
     try {
         const { reviewId } = req.params;
         const { rating, comment } = req.body;
-        const userData = await getUserDataFromReq(req); // Your authentication logic to get user data
+        //const userData = await getUserDataFromReq(req); // Your authentication logic to get user data
+
+        const userData = res.locals.userData;
 
         // Validate user data and check if they are the owner of the review
-        if (!userData) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
+        // if (!userData) {
+        //     return res.status(401).json({ error: 'Unauthorized' });
+        // }
 
         // Optional validation checks
         if (rating < 1 || rating > 5 || !comment.trim()) {
@@ -448,14 +369,15 @@ app.patch('/:reviewId', async (req, res) => {
 });
 
 // Delete a review
-app.delete('/:reviewId', async (req, res) => {
+app.delete('/:reviewId', jwtmiddleWare, async (req, res) => {
     try {
         const { reviewId } = req.params;
-        const userData = await getUserDataFromReq(req); // Your authentication logic to get user data
+        //const userData = await getUserDataFromReq(req); // Your authentication logic to get user data
+        const userData = res.locals.userData;
 
-        if (!userData) {
-            return res.status(401).json({ error: 'Unauthorized' });
-        }
+        // if (!userData) {
+        //     return res.status(401).json({ error: 'Unauthorized' });
+        // }
       // Find the review to ensure it exists and to check ownership
         const reviewToDelete = await Review.findById(reviewId);
         if (!reviewToDelete) {
@@ -479,28 +401,6 @@ app.delete('/:reviewId', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
-
-// Add this endpoint to handle deleting a booking by ID
-app.delete('/bookings/:id', async (req, res) => {
-  const userData = await getUserDataFromReq(req);
-  const { id } = req.params;
-
-  try {
-      // Find the booking by ID and the user ID to ensure ownership
-      const booking = await Booking.findOneAndDelete({ _id: id, user: userData.id });
-
-      if (!booking) {
-          return res.status(404).json({ error: 'Booking not found or unauthorized' });
-      }
-
-      res.json({ message: 'Booking deleted successfully' });
-  } catch (error) {
-      console.error('Error deleting booking:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
 
 
 app.listen(4000, () => {

@@ -23,7 +23,7 @@ const RegisterPage = () => {
         }
 
         try {
-            await axios.post("/register", {
+            await axios.post("/user/register", {
                 name,
                 email,
                 password,
@@ -31,8 +31,8 @@ const RegisterPage = () => {
             alert('Registration successful');
 
             // Log in the user after successful registration
-            const loginData = await axios.post("/login", { email, password });
-          
+            const loginData = await axios.post("/user/login", { email, password });
+
 
             setRedirect(true);
         } catch (error) {
