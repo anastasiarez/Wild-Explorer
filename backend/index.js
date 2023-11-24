@@ -317,25 +317,25 @@ app.post("/bookings", async (req, res) => {
 
 
 app.post('/bookings/:bookingId', async (req, res) => {
-  const userData = await getUserDataFromReq(req); 
+  const userData = await getUserDataFromReq(req);
   const {
-    checkIn, 
+    checkIn,
     checkOut,
     // place,
-    // numberOfGuests, 
-    // name, 
-    // phone, 
+    // numberOfGuests,
+    // name,
+    // phone,
     // price,
   } = req.body;
 
   Booking.updateOne({user:userData.id},
     {
-    checkIn, 
+    checkIn,
     checkOut,
     // place,
-    // numberOfGuests, 
-    // name, 
-    // phone, 
+    // numberOfGuests,
+    // name,
+    // phone,
     // price,
     // user: userData.id,
   }).then((doc) => {
