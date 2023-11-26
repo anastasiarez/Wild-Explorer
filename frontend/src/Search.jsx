@@ -3,13 +3,17 @@ import { useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+console.log('Search Component Rendered');
+
 const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
 
   const [wordSearch, setWordSearch] = useState("");
 
 
   const handleSearchInput = (event) => {
-    setWordSearch(event.target.value);
+    const newWordSearch = event.target.value;
+    setWordSearch(newWordSearch);
+    console.log('Search input updated:', newWordSearch);
   };
 
   const handleSearchSubmit = async () => {
@@ -23,7 +27,7 @@ const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
       }
 
       const data = await response.json();
-    
+
       setSearchResults(data); // Assuming data is an array of properties
       onSearch(data)
     } catch (error) {
