@@ -6,18 +6,11 @@ import Search from "../Search";
 const IndexPage = ({searchResults, searchButtonClick}) => {
   const [places, setPlaces] = useState([]);
 
-
-
   useEffect(() => {
     axios.get("/places").then((response) => {
       setPlaces(response.data);
     });
   }, []);
-
-
-
-
-
 
   return (
     <div>
@@ -39,8 +32,8 @@ const IndexPage = ({searchResults, searchButtonClick}) => {
                   )}
                 </div>
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold mb-2">{result.address}</h2>
-                  <h3 className="text-sm text-gray-500 mb-2">{result.title}</h3>
+                  <h2 className="text-sm text-gray-500 mb-2">{result.title}</h2>
+                  <h3 className="text-xl font-semibold mb-2">{result.address}</h3>
                   <div className="flex flex-col items-center justify-between">
                     <span className="font-bold">${result.price}</span>
                     <span className="text-gray-500 text-sm">per night</span>
