@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "./UserContext.jsx";
 import Search from "./Search.jsx";
 
 const Header = ({ onSearch,  setSearchResults, setSearchButtonClick }) => {
   const { user } = useContext(UserContext);
+  const location = useLocation();
+
   return (
     <>
       <div className="">
@@ -49,7 +51,12 @@ const Header = ({ onSearch,  setSearchResults, setSearchButtonClick }) => {
             </Link>
           </div>
           <div id="searchbar">
-            <Search onSearch={onSearch} setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick} />
+          {location.pathname === '/' && (
+            <Search
+              setSearchResults={setSearchResults}
+              setSearchButtonClick={setSearchButtonClick}
+            />
+          )}
 
           </div>
         </header>
