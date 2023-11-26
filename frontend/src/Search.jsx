@@ -27,20 +27,26 @@ const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
       const data = await response.json();
 
       setSearchResults(data);
-      onSearch(data);
 
       if (typeof onSearch === 'function') {
         onSearch(data);
       }
+
+      if (data.length === 0) {
+        setWordSearch("");
+      }
+
     } catch (error) {
       console.error("Error fetching properties:", error);
     }
   };
+
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
       handleSearchSubmit();
     }
   };
+
   return (
     <div className="flex gap-2">
       <div className="flex-1">
