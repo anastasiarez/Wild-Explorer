@@ -3,13 +3,15 @@ import { useState } from "react";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
+console.log('Search Component Rendered');
 
+const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
   const [wordSearch, setWordSearch] = useState("");
 
-
   const handleSearchInput = (event) => {
-    setWordSearch(event.target.value);
+    const newWordSearch = event.target.value;
+    setWordSearch(newWordSearch);
+    console.log('Search input updated:', newWordSearch);
   };
 
   const handleSearchSubmit = async () => {
@@ -23,14 +25,21 @@ const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
       }
 
       const data = await response.json();
-    
-      setSearchResults(data); // Assuming data is an array of properties
-      onSearch(data)
+
+      setSearchResults(data);
+
+      if (typeof onSearch === 'function') {
+        onSearch(data);
+      }
     } catch (error) {
       console.error("Error fetching properties:", error);
     }
   };
-
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSearchSubmit();
+    }
+  };
   return (
     <div className="flex gap-2">
       <div className="flex-1">
@@ -38,18 +47,19 @@ const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
           className="w-full px-4 py-2 border border-black rounded focus:outline-none focus:border-primary"
           placeholder="Search for places"
           value={wordSearch}
-          // onChange={(e) => setWordSearch(e.target.value)}
           onChange={handleSearchInput}
+          onKeyPress={handleKeyPress}
         />
       </div>
       <div>
-        <button type="button"
+        <button
+          type="button"
           className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-80 focus:outline-none"
-          onClick={handleSearchSubmit}>Search
+          onClick={handleSearchSubmit}
+        >
+          Search
         </button>
       </div>
-
-
     </div>
   );
 };
