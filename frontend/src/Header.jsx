@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { UserContext } from "./UserContext.jsx";
 import Search from "./Search.jsx";
 
-const Header = ({ onSearch,  setSearchResults, setSearchButtonClick }) => {
+const Header = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
   const { user } = useContext(UserContext);
   const location = useLocation();
 
@@ -51,12 +51,12 @@ const Header = ({ onSearch,  setSearchResults, setSearchButtonClick }) => {
             </Link>
           </div>
           <div id="searchbar">
-          {location.pathname === '/' && (
-            <Search
-              setSearchResults={setSearchResults}
-              setSearchButtonClick={setSearchButtonClick}
-            />
-          )}
+            {location.pathname === '/' && (
+              <Search
+                setSearchResults={setSearchResults}
+                setSearchButtonClick={setSearchButtonClick}
+              />
+            )}
 
           </div>
         </header>

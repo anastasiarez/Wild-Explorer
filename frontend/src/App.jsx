@@ -28,8 +28,8 @@ function App() {
   return (
     <UserContextProvider>
       <Routes>
-        <Route path="/" element={<Layout setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick}/>}>
-          <Route index element={<IndexPage searchResults={searchResults} searchButtonClick={searchButtonClick}/>}/>
+        <Route path="/" element={<Layout setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick} />}>
+          <Route index element={<IndexPage searchResults={searchResults} searchButtonClick={searchButtonClick} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />

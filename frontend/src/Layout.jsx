@@ -3,7 +3,7 @@ import Header from "./Header";
 import { useState } from "react";
 import Search from "./Search";
 
-const Layout = ({setSearchResults, setSearchButtonClick}) => {
+const Layout = ({ setSearchResults, setSearchButtonClick }) => {
   const [searchData, SetSearchData] = useState([]);
 
   const handleSearch = (newSearchData) => {
