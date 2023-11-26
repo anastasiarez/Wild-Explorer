@@ -27,6 +27,7 @@ const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
       const data = await response.json();
 
       setSearchResults(data);
+      onSearch(data);
 
       if (typeof onSearch === 'function') {
         onSearch(data);

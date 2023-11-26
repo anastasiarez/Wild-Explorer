@@ -40,8 +40,8 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
             </Link>
           ))
         ) : searchButtonClick && <p className="text-center text-black-500 mt-4 font-bold text-xl ">no search result found.</p>}
-        {places.length > 0 && searchResults.length == 0
-          ? places.map((place) => (
+        {places.length > 0 && searchResults.length === 0 ? (
+          places.map((place) => (
             <Link key={place._id} to={`/place/${place._id}`}>
               <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
                 <div className="aspect-w-3 aspect-h-2">
@@ -68,7 +68,11 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
               </div>
             </Link>
           ))
-          : searchResults == 0 && <p className="text-center text-black-500 mt-4 font-bold text-xl">no properties available</p>}
+        ) : searchResults.length === 0 && (
+          <p className="text-center text-black-500 mt-4 font-bold text-xl">
+            No properties available.
+          </p>
+        )}
       </div>
     </div>
   );
