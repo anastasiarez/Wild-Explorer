@@ -6,12 +6,15 @@ import Layout from "./Layout";
 import RegisterPage from "./components/RegisterPage";
 import axios from "axios";
 import { UserContextProvider } from "./UserContext";
+
 import PlacesPage from "./components/PlacesPage";
+import PlacePage from "./components/PlacePage";
+
 import ProfilePage from "./components/ProfilePage";
 import PlacesFormPage from "./components/PlacesFormPage";
 import Search from "./Search";
 import { useState } from "react";
-import PlacePage from "./components/PlacePage";
+
 import BookingsPage from "./components/BookingsPage";
 import BookingPage from "./components/BookingPage";
 
@@ -25,14 +28,13 @@ function App() {
   return (
     <UserContextProvider>
       <Routes>
-        <Route
-          path="/"
-          element={<Layout setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick} />}
-        >
-          <Route index element={<IndexPage searchResults={searchResults} searchButtonClick={searchButtonClick} />} />
+        <Route path="/" element={<Layout setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick}/>}>
+          <Route index element={<IndexPage searchResults={searchResults} searchButtonClick={searchButtonClick}/>}/>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
+          <Route path="/account/bookings" element={<PlacesPage />} />
+
           <Route path="/account/places" element={<PlacesPage />} />
           <Route path="/account/places/new" element={<PlacesFormPage />} />
           <Route path="/account/places/:id" element={<PlacesFormPage />} />
@@ -43,6 +45,7 @@ function App() {
       </Routes>
     </UserContextProvider>
   );
+
 }
 
 export default App;
