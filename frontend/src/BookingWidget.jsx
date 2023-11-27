@@ -1,19 +1,39 @@
 import { useContext, useEffect, useState } from "react";
-import { differenceInCalendarDays, format } from "date-fns";
+import { differenceInCalendarDays, format, eachDayOfInterval } from "date-fns";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import { UserContext } from "./UserContext.jsx";
+import "react-datepicker/dist/react-datepicker.css";
+import ReactDatePicker from "react-datepicker";
+
 
 const isPhoneNumberValid = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
-
 export default function BookingWidget({ place }) {
-  const [checkIn, setCheckIn] = useState('');
+  const [checkIn, setCheckIn] = useState(null);
   const [checkOut, setCheckOut] = useState('');
   const [numberOfGuests, setNumberOfGuests] = useState('1');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [redirect, setRedirect] = useState('');
   const { user } = useContext(UserContext);
+  const [bookedDates, setBookedDates] = useState([]);
+
+
+  useEffect(() => {
+    axios.get(`/bookings/${place._id}`).then(response => {
+      const result = [];
+      for (const { checkIn, checkOut } of response.data) {
+
+        const bookingPeriod = eachDayOfInterval({
+          start: new Date(checkIn), 
+          end: new Date(checkOut) 
+        });
+        result.push(...bookingPeriod);
+      }
+      setBookedDates(result);
+    }
+    );
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -64,20 +84,23 @@ export default function BookingWidget({ place }) {
         <div className="flex">
           <div className=" py-3 px-4">
             <label>Check-In: </label>
-            <input
-              type="date"
-              value={checkIn}
-              min={format(new Date(), 'yyyy-MM-dd')}
-              onChange={(e) => setCheckIn(e.target.value)}
+            <ReactDatePicker
+              excludeDates={bookedDates}
+              selected={checkIn}
+              onSelect={setCheckIn}
+              onChange={setCheckIn}
+              minDate={new Date()}
             />
           </div>
           <div className=" py-5 px-5 border-l">
             <label>Check-Out: </label>
-            <input
-              type="date"
-              value={checkOut}
-              min={checkIn || format(new Date(), 'yyyy-MM-dd')}
-              onChange={(e) => setCheckOut(e.target.value)}
+
+            <ReactDatePicker
+              excludeDates={bookedDates}
+              selected={checkOut}
+              onSelect={setCheckOut}
+              onChange={setCheckOut}
+              minDate={checkIn || new Date()}
             />
           </div>
         </div>

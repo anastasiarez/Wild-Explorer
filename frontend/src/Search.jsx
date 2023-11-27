@@ -1,8 +1,6 @@
 import React from "react";
 import { useState } from "react";
 
-import "react-datepicker/dist/react-datepicker.css";
-
 console.log('Search Component Rendered');
 
 const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
