@@ -267,6 +267,11 @@ app.get('/bookings', async (req, res) => {
   res.json(await Booking.find({ user: userData.id }).populate('place'));
 });
 
+app.get('/bookings/:placeId', async (req, res) => {
+
+  res.json(await Booking.find({ place: req.params.placeId }));
+});
+
 
 app.listen(4000, () => {
   console.log("Server is running on port 4000");
