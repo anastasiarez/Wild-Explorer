@@ -69,12 +69,7 @@ const PlacesPage = () => {
                                 <p className="text-gray-700 text-sm leading-snug mb-4">
                                     ${place.price}
                                 </p>
-                                <Link
-                                    to={{ pathname: "/account/places/" + place._id }}
-                                    className="text-primary hover:underline"
-                                >
-                                    View Details
-                                </Link>
+                                
                             </div>
                         </Link>
                     ))
