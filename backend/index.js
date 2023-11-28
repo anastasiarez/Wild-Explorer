@@ -1,21 +1,19 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-
 const bcrypt = require('bcryptjs');
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jsonWebToken = require('jsonwebtoken');
 const jwtSecret = 'fnr;nva4o5awbew/cvae';
 const cookieParser = require('cookie-parser');
-require("dotenv").config();
 const imageDownloader = require('image-downloader');
 const multer = require('multer');
 const fs = require('fs');
 const User = require("./models/User.js");
 const Place = require('./models/Place.js');
-const PlaceModel = require("./models/Place.js");
 const Booking = require('./models/Booking.js');
-
+const PlaceModel = require("./models/Place.js");
+require("dotenv").config();
 
 const app = express();
 app.use('/uploads', express.static(__dirname + '/uploads'));
@@ -53,6 +51,7 @@ function getUserDataFromReq(req) {
 }
 
 
+////////  REGISTER, LOGIN/LOGOUT & PROFILE  ///////////
 
 app.post("/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -112,6 +111,8 @@ app.get('/profile', (req, res) => {
   }
 });
 
+////////  UPLOAD IMG-S  ///////////
+
 //download images from the web to a local destination
 app.post('/upload-by-link', async (req, res) => {
   const { link } = req.body;
@@ -125,7 +126,7 @@ app.post('/upload-by-link', async (req, res) => {
 });
 
 
-// to store files locally
+//store files locally
 const photosMiddleware = multer({ dest: 'uploads' });
 app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
   const uploadedFiles = [];
@@ -140,6 +141,8 @@ app.post('/upload', photosMiddleware.array('photos', 100), (req, res) => {
   }
   res.json(uploadedFiles);
 });
+
+////////  PLACES  ///////////
 
 app.post('/places', (req, res) => {
   const { token } = req.cookies;
@@ -162,7 +165,7 @@ app.post('/places', (req, res) => {
         price
       });
 
-      res.json(placeDoc);// previous part run up to here
+      res.json(placeDoc);
     } catch (error) {
       console.error('Error creating place:', error);
       res.status(500).json({ error: 'Internal Server Error' });
@@ -218,10 +221,6 @@ app.get('/search-places', async (req, res) => {
     if (!query) {
       return res.status(400).json({ error: 'Search query is missing.' });
     }
-
-
-
-
     const properties = await Place.find({
       $or: [
         { title: { $regex: query, $options: 'i' } },
@@ -237,12 +236,11 @@ app.get('/search-places', async (req, res) => {
 });
 
 
-//end points for index page
 app.get('/places', async (req, res) => {
   res.json(await Place.find());
 });
 
-
+////////  BOOKINGS  ///////////
 
 app.post('/bookings', async (req, res) => {
   const userData = await getUserDataFromReq(req);
@@ -259,7 +257,34 @@ app.post('/bookings', async (req, res) => {
   });
 });
 
+app.post('/bookings/:bookingId', async (req, res) => {
+  const userData = await getUserDataFromReq(req); 
+  const {
+    checkIn, 
+    checkOut,
+    // place,
+    // numberOfGuests, 
+    // name, 
+    // phone, 
+    // price,
+  } = req.body;
 
+  Booking.updateOne({user:userData.id},
+    {
+    checkIn, 
+    checkOut,
+    // place,
+    // numberOfGuests, 
+    // name, 
+    // phone, 
+    // price,
+    // user: userData.id,
+  }).then((doc) => {
+    res.json(doc);
+  }).catch((err) => {
+    throw err;
+  });
+});
 
 
 app.get('/bookings', async (req, res) => {
@@ -271,6 +296,9 @@ app.get('/bookings/:placeId', async (req, res) => {
 
   res.json(await Booking.find({ place: req.params.placeId }));
 });
+
+
+
 
 
 app.listen(4000, () => {
