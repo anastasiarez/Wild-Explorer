@@ -1,10 +1,32 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { differenceInCalendarDays, eachDayOfInterval, isWithinInterval } from "date-fns";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext.jsx";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+function excludeSingleDate(bookedDates) {
+  const missingDates = [];
+
+  for (let i = 0; i < bookedDates.length - 1; i++) {
+    const currentDate = (bookedDates[i]);
+    const nextDate = (bookedDates[i + 1]);
+
+    const interval = eachDayOfInterval({ start: currentDate, end: nextDate });
+
+    if (interval.length > 1) {
+      const missingDatesInInterval = interval.slice(1, -1);
+      missingDates.push(...missingDatesInInterval);
+    }
+  }
+  return [...missingDates, ...bookedDates];
+
+}
+
+function removeDuplicates (dates) {
+  return [...new Set(dates.map(date => date.getTime()))].map(date => new Date(date)).sort((a, b) => a.getTime() - b.getTime());
+}
 
 
 export default function BookingWidget({ place }) {
@@ -19,9 +41,9 @@ export default function BookingWidget({ place }) {
   const [maxGuests, setMaxGuests] = useState(1);
   const [bookingId, setBookingId] = useState(null);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [redirect, setRedirect] = useState('');
+  const navigate = useNavigate();
+  //const [redirect, setRedirect] = useState('');
 
   useEffect(() => {
     axios.get(`/bookings/${place._id}`).then(response => {
@@ -32,8 +54,10 @@ export default function BookingWidget({ place }) {
           end: new Date(checkOut)
         });
         result.push(...bookingPeriod);
+
       }
-      setBookedDates(result);
+      setBookedDates(excludeSingleDate(removeDuplicates(result)));
+      
     });
   }, []);
 
@@ -55,7 +79,6 @@ export default function BookingWidget({ place }) {
 
   async function bookThisPlace() {
     if (parseInt(numberOfGuests, 10) > maxGuests) {
-      console.error("Number of guests exceeds the maximum allowed.");
       return;
     }
 
@@ -79,35 +102,20 @@ export default function BookingWidget({ place }) {
 
       setBookingSuccess(true);
       setBookingId(newBookingId);
-      setRedirect(`/account/bookings/${newBookingId}`);
 
-    } catch (error) {
+      setTimeout(() => {
+        navigate(`/account/bookings/`);
+      }, 1000);
+
+
+    }
+    catch (error) {
       console.error("Failed to book:", error);
       setErrorMessage("Something went wrong. Please try again.");
     }
   }
 
-  useEffect(() => {
-    if (bookingSuccess) {
-      const successTimer = setTimeout(() => {
-        setSuccessMessage("Success! You are going to travel now!");
-      }, 1000);
 
-      const redirectTimer = setTimeout(() => {
-        setRedirect(`/account/bookings/${bookingId}`);
-      }, 2000);
-
-      return () => {
-        clearTimeout(successTimer);
-        clearTimeout(redirectTimer);
-      };
-    }
-  }, [bookingSuccess, redirect, bookingId]);
-
-
-  // if (redirect) {
-  //   return <Navigate to={redirect} />;
-  // }
 
   const isPhoneNumberValid = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
 
@@ -134,7 +142,10 @@ export default function BookingWidget({ place }) {
             <label>Check-In: </label>
             <ReactDatePicker
               selected={checkIn}
-              onChange={date => setCheckIn(date)}
+              onChange={date => {
+                setCheckIn(date);
+                setErrorMessage(null);
+              }}
               minDate={new Date()}
               excludeDates={bookedDates}
               dateFormat="yyyy/MM/dd"
@@ -145,7 +156,10 @@ export default function BookingWidget({ place }) {
             <label>Check-Out: </label>
             <ReactDatePicker
               selected={checkOut}
-              onChange={date => setCheckOut(date)}
+              onChange={date => {
+                setCheckOut(date);
+                setErrorMessage(null);
+              }}
               minDate={checkIn || new Date()}
               excludeDates={bookedDates}
               dateFormat="yyyy/MM/dd"
@@ -206,9 +220,9 @@ export default function BookingWidget({ place }) {
             Number of guests exceeds the maximum allowed ({maxGuests} guests).
           </div>
         )}
-        {successMessage && (
+        {bookingSuccess && (
           <div className="text-green-500 mt-2">
-            {successMessage}
+            Success! You are going to travel now!
           </div>
         )}
         {errorMessage && (
