@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-
 const bcrypt = require("bcryptjs");
 const bcryptSalt = bcrypt.genSaltSync(10);
 const jsonWebToken = require("jsonwebtoken");
@@ -17,7 +16,6 @@ const PlaceModel = require("./models/Place.js");
 const Booking = require("./models/Booking.js");
 const Review = require("./models/Review.js");
 const reviewsRouter = express.Router();
-
 
 // Routes
 const app = express();
@@ -70,6 +68,10 @@ function getUserDataFromReq(req) {
     );
   });
 }
+
+
+////////  REGISTER, LOGIN/LOGOUT & PROFILE  ///////////
+
 
 app.post("/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -133,6 +135,8 @@ app.get("/profile", (req, res) => {
   }
 });
 
+////////  UPLOAD IMG-S  ///////////
+
 //download images from the web to a local destination
 app.post("/upload-by-link", async (req, res) => {
   const { link } = req.body;
@@ -147,6 +151,7 @@ app.post("/upload-by-link", async (req, res) => {
 // to store files locally
 const photosMiddleware = multer({ dest: "uploads" });
 app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
+
   const uploadedFiles = [];
   for (let i = 0; i < req.files.length; i++) {
     const { path, originalname } = req.files[i];
@@ -160,7 +165,11 @@ app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
   res.json(uploadedFiles);
 });
 
+
+////////  PLACES  ///////////
+
 app.post("/places", (req, res) => {
+
   const { token } = req.cookies;
   const {
     title,
@@ -191,6 +200,7 @@ app.post("/places", (req, res) => {
         maxGuests,
         price,
       });
+
 
       res.json(placeDoc); // previous part run up to here
     } catch (error) {
@@ -272,12 +282,18 @@ app.get("/search-places", async (req, res) => {
   }
 });
 
-//end points for index page
-app.get("/places", async (req, res) => {
+
+
+app.get('/places', async (req, res) => {
   res.json(await Place.find());
 });
 
+////////  BOOKINGS  ///////////
+
+//end points for index page
+
 app.post("/bookings", async (req, res) => {
+
   const userData = await getUserDataFromReq(req);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
     req.body;
@@ -299,6 +315,36 @@ app.post("/bookings", async (req, res) => {
     });
 });
 
+
+app.post('/bookings/:bookingId', async (req, res) => {
+  const userData = await getUserDataFromReq(req); 
+  const {
+    checkIn, 
+    checkOut,
+    // place,
+    // numberOfGuests, 
+    // name, 
+    // phone, 
+    // price,
+  } = req.body;
+
+  Booking.updateOne({user:userData.id},
+    {
+    checkIn, 
+    checkOut,
+    // place,
+    // numberOfGuests, 
+    // name, 
+    // phone, 
+    // price,
+    // user: userData.id,
+  }).then((doc) => {
+    res.json(doc);
+  }).catch((err) => {
+    throw err;
+  });
+});
+
 app.get("/bookings", async (req, res) => {
   const userData = await getUserDataFromReq(req);
   res.json(await Booking.find({ user: userData.id }).populate("place"));
@@ -309,6 +355,7 @@ app.post("/reviews", async (req, res) => {
   try {
     const { property, rating, comment } = req.body;
     let userData = null;
+
 
     try {
       userData = await getUserDataFromReq(req);
@@ -427,6 +474,9 @@ app.delete('/:reviewId', async (req, res) => {
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });
+
+
+
 
 
 app.listen(4000, () => {

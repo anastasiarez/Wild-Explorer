@@ -1,38 +1,64 @@
-import { useContext, useEffect, useState } from "react";
-import { differenceInCalendarDays, format, eachDayOfInterval } from "date-fns";
 import axios from "axios";
-import { Navigate } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { differenceInCalendarDays, eachDayOfInterval, isWithinInterval } from "date-fns";
+import { Navigate, useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext.jsx";
-import "react-datepicker/dist/react-datepicker.css";
 import ReactDatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+function excludeSingleDate(bookedDates) {
+  const missingDates = [];
+
+  for (let i = 0; i < bookedDates.length - 1; i++) {
+    const currentDate = (bookedDates[i]);
+    const nextDate = (bookedDates[i + 1]);
+
+    const interval = eachDayOfInterval({ start: currentDate, end: nextDate });
+
+    if (interval.length > 1) {
+      const missingDatesInInterval = interval.slice(1, -1);
+      missingDates.push(...missingDatesInInterval);
+    }
+  }
+  return [...missingDates, ...bookedDates];
+
+}
+
+function removeDuplicates (dates) {
+  return [...new Set(dates.map(date => date.getTime()))].map(date => new Date(date)).sort((a, b) => a.getTime() - b.getTime());
+}
 
 
-const isPhoneNumberValid = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
 export default function BookingWidget({ place }) {
-  const [checkIn, setCheckIn] = useState(null);
-  const [checkOut, setCheckOut] = useState('');
-  const [numberOfGuests, setNumberOfGuests] = useState('1');
+
+  const { user } = useContext(UserContext);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-  const [redirect, setRedirect] = useState('');
-  const { user } = useContext(UserContext);
+  const [checkIn, setCheckIn] = useState(null);
+  const [checkOut, setCheckOut] = useState(null);
+  const [numberOfGuests, setNumberOfGuests] = useState('1');
   const [bookedDates, setBookedDates] = useState([]);
-
+  const [maxGuests, setMaxGuests] = useState(1);
+  const [bookingId, setBookingId] = useState(null);
+  const [bookingSuccess, setBookingSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+  //const [redirect, setRedirect] = useState('');
 
   useEffect(() => {
     axios.get(`/bookings/${place._id}`).then(response => {
       const result = [];
       for (const { checkIn, checkOut } of response.data) {
-
         const bookingPeriod = eachDayOfInterval({
-          start: new Date(checkIn), 
-          end: new Date(checkOut) 
+          start: new Date(checkIn),
+          end: new Date(checkOut)
         });
         result.push(...bookingPeriod);
+
       }
-      setBookedDates(result);
-    }
-    );
+      setBookedDates(excludeSingleDate(removeDuplicates(result)));
+      
+    });
   }, []);
 
   useEffect(() => {
@@ -41,32 +67,62 @@ export default function BookingWidget({ place }) {
     }
   }, [user]);
 
+  useEffect(() => {
+    setMaxGuests(place.maxGuests);
+  }, [place]);
+
   let numberOfNights = 0;
+
   if (checkIn && checkOut) {
     numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
   }
 
   async function bookThisPlace() {
-    const response = await axios.post('/bookings', {
-      checkIn,
-      checkOut,
-      numberOfGuests,
-      name,
-      phone,
-      place: place._id,
-      price: numberOfNights * place.price,
-    });
-    const bookingId = response.data._id;
-    setRedirect(`/account/bookings/${bookingId}`);
+    if (parseInt(numberOfGuests, 10) > maxGuests) {
+      return;
+    }
+
+    try {
+      if (numberOfNights < 2) {
+        setErrorMessage("Minimum booking duration is two nights.");
+        return;
+      }
+
+      const response = await axios.post('/bookings', {
+        checkIn,
+        checkOut,
+        numberOfGuests,
+        name,
+        phone,
+        place: place._id,
+        price: numberOfNights * place.price,
+      });
+
+      const newBookingId = response.data._id;
+
+      setBookingSuccess(true);
+      setBookingId(newBookingId);
+
+      setTimeout(() => {
+        navigate(`/account/bookings/`);
+      }, 1000);
+
+
+    }
+    catch (error) {
+      console.error("Failed to book:", error);
+      setErrorMessage("Something went wrong. Please try again.");
+    }
   }
-  if (redirect) {
-    return <Navigate to={redirect} />;
-  }
+
+
+
+  const isPhoneNumberValid = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
 
   const isFormValid = () => {
     return (
-      checkIn !== '' &&
-      checkOut !== '' &&
+      checkIn !== null &&
+      checkOut !== null &&
       numberOfGuests !== '' &&
       name !== '' &&
       isPhoneNumberValid(phone)
@@ -76,36 +132,42 @@ export default function BookingWidget({ place }) {
   return (
     <div className="bg-white shadow p-4 rounded-2xl">
       <div className="text-2xl text-center">
-
         Price: ${place.price} / per night
       </div>
 
       <div className="border rounded-2xl mt-8">
         <div className="flex">
-          <div className=" py-3 px-4">
+          <div className="py-3 px-4">
+
             <label>Check-In: </label>
             <ReactDatePicker
-              excludeDates={bookedDates}
               selected={checkIn}
-              onSelect={setCheckIn}
-              onChange={setCheckIn}
+              onChange={date => {
+                setCheckIn(date);
+                setErrorMessage(null);
+              }}
               minDate={new Date()}
+              excludeDates={bookedDates}
+              dateFormat="yyyy/MM/dd"
             />
           </div>
-          <div className=" py-5 px-5 border-l">
-            <label>Check-Out: </label>
+          <div className="py-5 px-5 border-l">
 
+            <label>Check-Out: </label>
             <ReactDatePicker
-              excludeDates={bookedDates}
               selected={checkOut}
-              onSelect={setCheckOut}
-              onChange={setCheckOut}
+              onChange={date => {
+                setCheckOut(date);
+                setErrorMessage(null);
+              }}
               minDate={checkIn || new Date()}
+              excludeDates={bookedDates}
+              dateFormat="yyyy/MM/dd"
             />
           </div>
         </div>
-
         <div className="py-3 px-4 border-t">
+
           <label>Number of guests: </label>
           <input
             type="number"
@@ -113,8 +175,8 @@ export default function BookingWidget({ place }) {
             onChange={(e) => setNumberOfGuests(e.target.value)}
           />
         </div>
-
         <div className="py-3 px-3 border-t">
+
           <label>Your full name: </label>
           <input
             type="text"
@@ -122,9 +184,9 @@ export default function BookingWidget({ place }) {
             onChange={(e) => setName(e.target.value)}
           />
         </div>
-
         <div className="py-3 px-3 border-t">
-          <label>Phone Number: </label>
+
+          <label>Phone number: </label>
           <input
             type="tel"
             value={phone}
@@ -139,9 +201,7 @@ export default function BookingWidget({ place }) {
             }
           />
           {!isPhoneNumberValid(phone) && phone !== "" && (
-            <p>
-              Please enter a 10-digit phone number
-            </p>
+            <p>Please enter a 10-digit phone number</p>
           )}
         </div>
 
@@ -151,9 +211,25 @@ export default function BookingWidget({ place }) {
           disabled={!isFormValid()}
           style={!isFormValid() ? { cursor: 'not-allowed', opacity: 0.6 } : {}}
         >
-          Book this place
+          Book for
           {numberOfNights > 0 && <span> ${numberOfNights * place.price}</span>}
         </button>
+
+        {parseInt(numberOfGuests, 10) > maxGuests && (
+          <div className="text-red-500 mt-2">
+            Number of guests exceeds the maximum allowed ({maxGuests} guests).
+          </div>
+        )}
+        {bookingSuccess && (
+          <div className="text-green-500 mt-2">
+            Success! You are going to travel now!
+          </div>
+        )}
+        {errorMessage && (
+          <div className="text-red-500 mt-2">
+            {errorMessage}
+          </div>
+        )}
       </div>
     </div>
   );

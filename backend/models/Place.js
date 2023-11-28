@@ -17,5 +17,3 @@ const placeSchema = new mongoose.Schema({
 const PlaceModel = mongoose.model("Place", placeSchema);
 
 module.exports = PlaceModel;
-
-//get user place get user id; use
