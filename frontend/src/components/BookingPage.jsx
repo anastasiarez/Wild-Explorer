@@ -1,4 +1,4 @@
-import {useParams} from "react-router-dom";
+import {useParams,Navigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import axios from "axios";
 import AddressLink from "../AddressLink";
@@ -9,6 +9,11 @@ import BookingDates from "../BookingDates";
 export default function BookingPage() {
     const {id} = useParams();
     const [booking,setBooking] = useState(null);
+    const [message, setMessage] = useState('');
+
+    const [redirect, setRedirect] = useState(false);
+
+
     useEffect(() => {
       if (id) {
         axios.get('/bookings').then(response => {
@@ -19,6 +24,32 @@ export default function BookingPage() {
         });
       }
     }, [id]);
+
+    const handleCancelBooking = () => {
+        if (booking && booking._id) {
+            axios.delete(`/bookings/${booking._id}`)
+                .then(() => {
+                  
+                    console.log("Booking cancelled successfully");
+                  
+                    setBooking(null);
+                    alert('Booking has been cancelled');; // Set the message here
+                    setRedirect(true);
+
+
+                })
+                .catch(error => {
+                    console.error("Error cancelling booking:", error);
+                    alert('Failed to cancel booking'); // Set an error message if cancellation fails
+                  
+                });
+        }
+    };
+
+    if (redirect) {
+
+        return <Navigate to={"/account/bookings"} />;
+    }
   
     if (!booking) {
       return '';
@@ -39,6 +70,18 @@ export default function BookingPage() {
           </div>
         </div>
         <PlaceGallery place={booking.place} />
+
+
+        <button onClick={handleCancelBooking} className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+                Cancel Booking
+            </button>
+
+            {message && (
+                <div className="bg-green-200 p-4 rounded">
+                    <p>{message}</p>
+                </div>
+            )}
+
       </div>
     );
   }
