@@ -1,4 +1,5 @@
 // src/helpers/reviewsApi.js
+import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:4000';
 
@@ -15,12 +16,12 @@ export const getReviewsForProperty = async (propertyId) => {
   }
 };
 
-export const submittedReview = async (propertyId, rating, comment) => {
+export const submittedReview = async (property, rating, comment) => {
   try {
 
 
-    await axios.post(`${API_BASE_URL}/reviews`, {
-      propertyId,
+    await axios.post(`/reviews`, {
+      property,
       rating,
       comment,
     });

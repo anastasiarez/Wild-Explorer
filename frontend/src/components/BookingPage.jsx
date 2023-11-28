@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactDatePicker from "react-datepicker";
 import AddressLink from "../AddressLink";
@@ -7,7 +7,10 @@ import PlaceGallery from "../PlaceGallery";
 import { eachDayOfInterval, isWithinInterval, differenceInCalendarDays } from "date-fns";
 
 
+
+
 export default function BookingPage() {
+  const navigate = useNavigate();
   const { id } = useParams();
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,6 +21,27 @@ export default function BookingPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [booking, setBooking] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+ 
+  const handleCancelBooking = () => {
+    if (booking && booking._id) {
+      axios.delete(`/bookings/${booking._id}`)
+        .then(() => {
+
+          console.log("Booking cancelled successfully");
+
+          setBooking(null);
+          alert('Booking has been cancelled');; // Set the message here
+          navigate("/account/bookings/");
+
+
+        })
+        .catch(error => {
+          console.error("Error cancelling booking:", error);
+          alert('Failed to cancel booking'); // Set an error message if cancellation fails
+
+        });
+    }
+  };
 
   useEffect(() => {
     if (booking) {
@@ -200,6 +224,12 @@ export default function BookingPage() {
         </div>
       </div>
       <PlaceGallery place={booking.place} />
+
+      <button onClick={handleCancelBooking} className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+        Cancel Booking
+      </button>
+
     </div>
+
   );
 }

@@ -39,7 +39,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />
-          <Route path="/account/bookings" element={<PlacesPage />} />
+       
           <Route path="/account/places" element={<PlacesPage setPropertyId={setPropertyId}/>}/>
           <Route
             path="/property-reviews/:id"

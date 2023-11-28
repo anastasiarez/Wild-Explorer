@@ -350,6 +350,11 @@ app.get("/bookings", async (req, res) => {
   res.json(await Booking.find({ user: userData.id }).populate("place"));
 });
 
+app.get('/bookings/:placeId', async (req, res) => {
+
+  res.json(await Booking.find({ place: req.params.placeId }));
+});
+
 // Create a new review
 app.post("/reviews", async (req, res) => {
   try {
@@ -475,6 +480,25 @@ app.delete('/:reviewId', async (req, res) => {
     }
 });
 
+// Add this endpoint to handle deleting a booking by ID
+app.delete('/bookings/:id', async (req, res) => {
+  const userData = await getUserDataFromReq(req);
+  const { id } = req.params;
+
+  try {
+      // Find the booking by ID and the user ID to ensure ownership
+      const booking = await Booking.findOneAndDelete({ _id: id, user: userData.id });
+
+      if (!booking) {
+          return res.status(404).json({ error: 'Booking not found or unauthorized' });
+      }
+
+      res.json({ message: 'Booking deleted successfully' });
+  } catch (error) {
+      console.error('Error deleting booking:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 
 
