@@ -50,7 +50,7 @@ const Header = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
               </div>
             </Link>
           </div>
-          <div id="searchbar">
+          <div id="searchbar" className="mt-10 mb-5">
             {location.pathname === '/' && (
               <Search
                 setSearchResults={setSearchResults}
