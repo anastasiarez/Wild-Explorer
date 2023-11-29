@@ -43,10 +43,17 @@ dotenv @16.3.1
 ## Screenshots
 
 ### Index Page
+
 ### Register Page
+
 ### Login Page
+
 ### User Account Page
+
 ### My Places Page
+
 ### Add new Place Page
+
 ### My Bookings Page
+
 ### User Single Booking Page
