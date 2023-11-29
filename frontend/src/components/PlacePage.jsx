@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import BookingWidget from "../BookingWidget";
@@ -6,6 +6,7 @@ import Search from "../Search";
 import PlaceGallery from "../PlaceGallery";
 import AddressLink from "../AddressLink";
 import ReviewList from "./ReviewList";
+import Perks from "../Perks";
 
 export default function PlacePage() {
   const { id } = useParams();
@@ -31,6 +32,7 @@ export default function PlacePage() {
   const propertyId = id || place?._id;
 
   if (filteredPlaces.length > 0) {
+
     <Search onSearch={handleSearch} />;
   }
 
@@ -93,30 +95,35 @@ export default function PlacePage() {
             <h2 className="font-semibold text-2xl mb-5">Description</h2>
             <p className="text-gray-700">{place.description}</p>
           </div>
+
+          <h2 className="font-semibold text-2xl mt-10 mb-5">Perks</h2>
+          <div className="grid mt-2 mb-10 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+            <Perks selected={place.perks} />
+          </div>
+
           <p className="text-gray-700 mb-20">
             Check-In: {place.checkIn} <br />
             Check-out: {place.checkOut} <br />
             Max number of guests: {place.maxGuests}
           </p>
-          <h2 className="font-semibold text-2xl mb-5">Extra info & Rules
-          </h2>
-          <div className="mb-4">
-          <p className="text-gray-700">{place.extraInfo}</p>
+
         </div>
-        </div>
+
         <div>
           <BookingWidget place={place} />
         </div>
       </div>
 
       <div className="bg-white -mx-8 py-8 border-t">
-        
-        <div className="reviews-section">
-          
+        <h2 className="font-semibold text-2xl mb-5">Extra info & Rules</h2>
+        <div className="mb-20">
+          <p className="text-gray-700">{place.extraInfo}</p>
+        </div>
+
+        <div className="reviews-section text-xl mb-5">
           <ReviewList propertyId={propertyId || place._id} />
         </div>
       </div>
     </div>
   );
-
 }

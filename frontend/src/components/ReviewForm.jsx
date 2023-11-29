@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { submittedReview } from '../helpers/reviewsApi'; // Import your API function for submitting reviews
+import { submittedReview } from '../helpers/reviewsApi';
 
 const ReviewForm = ({ propertyId, onReviewSubmit }) => {
   const [rating, setRating] = useState(0);
@@ -18,12 +18,8 @@ const ReviewForm = ({ propertyId, onReviewSubmit }) => {
     console.log('Review submitted successfully:');
 
     try {
-      // Call your API function to submit the review
       await submittedReview(propertyId, rating, comment);
-
-      // Notify the parent component (ReviewList) that a new review has been submitted
       onReviewSubmit();
-
 
       setRating(0);
       setComment('');
@@ -34,7 +30,7 @@ const ReviewForm = ({ propertyId, onReviewSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className='mb-5'>
       <label>
         Give this place a rating:
         <input type="number" min="1" max="5" value={rating} onChange={handleRatingChange} />

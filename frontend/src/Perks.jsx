@@ -31,6 +31,8 @@ const Perks = ({ selected, onChange }) => {
 
         <span>Wifi</span>
       </label>
+
+
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
         <input type="checkbox" checked={selected.includes('parking')} name="parking" onChange={handleClick} />
         <svg
@@ -39,7 +41,7 @@ const Perks = ({ selected, onChange }) => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-20 h-6"
         >
           <path
             strokeLinecap="round"
@@ -48,8 +50,9 @@ const Perks = ({ selected, onChange }) => {
           />
         </svg>
 
-        <span>free parking</span>
+        <span>Free parking</span>
       </label>
+
       <label className="border p-4 flex rounded-2xl gap-2 items-center cursor-pointer">
         <input type="checkbox" checked={selected.includes('tv')} name="tv" onChange={handleClick} />
         <svg

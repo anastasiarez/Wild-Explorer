@@ -1,18 +1,15 @@
 import React from "react";
-import {useContext} from "react";
+import { useContext } from "react";
 import { UserContext } from "../UserContext.jsx";
 
 const Review = ({ review }) => {
 
   const { ready, user, setUser } = useContext(UserContext);
 
-  console.log("review", review);
-    
   const renderStarRating = () => {
-    const rating = review.rating; // Assuming review.rating is a number between 1 and 5
-    const maxRating = 5; // Maximum rating value
-  
-    // Create an array of stars based on the rating
+    const rating = review.rating;
+    const maxRating = 5;
+
     const stars = Array.from({ length: maxRating }, (_, index) => (
       <svg
         key={index}
@@ -20,7 +17,7 @@ const Review = ({ review }) => {
         fill={index < rating ? "yellow" : "none"}
         viewBox="0 0 24 24"
         strokeWidth={1.5}
-        stroke="currentColor"
+        stroke="orange"
         className="w-6 h-6"
       >
         <path
@@ -30,24 +27,42 @@ const Review = ({ review }) => {
         />
       </svg>
     ));
-  
-    return <div className="star-rating flex">{stars}</div>;
+
+     return <div className="flex">{stars}</div>;
   };
-  
+
   return (
-    <div className="review">
-      <div className="rating">{renderStarRating()}</div>
-      <p className="comment">{review.comment}</p>
-      <span className="author">{review.author}</span>
-      <span className="date">
-        {new Date(review.createdAt).toLocaleDateString()}
-      </span>
-      {user && user._id === review.user && (
-        <div className="actions">
-          <button onClick={() => onEdit(review._id)}>Edit</button>
-          <button onClick={() => onDelete(review._id)}>Delete</button>
+    <div className="border p-4 mb-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="col-span-1">
+          <div className="flex items-center mb-2">{renderStarRating()}</div>
         </div>
-      )}
+        <div className="col-span-1">
+          <p className="mb-2">{review.comment}</p>
+          <span className="block text-sm text-gray-600">{review.author}</span>
+          <span className="block text-sm text-gray-600">
+            {new Date(review.createdAt).toLocaleDateString()}
+          </span>
+        </div>
+        {/* {user && user._id === review.user && (
+          <div className="col-span-1">
+            <div className="space-x-2">
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => onEdit(review._id)}
+              >
+                Edit
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                onClick={() => onDelete(review._id)}
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        )} */}
+      </div>
     </div>
   );
 };

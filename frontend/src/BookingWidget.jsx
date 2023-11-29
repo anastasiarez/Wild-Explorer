@@ -20,8 +20,7 @@ export function excludeSingleDate(bookedDates) {
       missingDates.push(...missingDatesInInterval);
     }
   }
-  console.log([...missingDates, ...bookedDates]);
-  console.log("booked", bookedDates);
+
   return [...missingDates, ...bookedDates];
 
 }
@@ -113,7 +112,7 @@ export default function BookingWidget({ place }) {
     }
     catch (error) {
       console.error("Failed to book:", error);
-      setErrorMessage("Something went wrong. Please try again.");
+      setErrorMessage("Please register or loging");
     }
   }
 
