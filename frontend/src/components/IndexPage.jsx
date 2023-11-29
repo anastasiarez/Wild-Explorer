@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import Search from "../Search";
 
 const IndexPage = ({ searchResults, searchButtonClick }) => {
   const [places, setPlaces] = useState([]);
@@ -55,12 +54,12 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
                   )}
                 </div>
                 <div className="p-4">
-                  <h2 className="text-xl font-semibold mb-2">
-                    {place.address}
-                  </h2>
-                  <h3 className="text-sm text-gray-500 mb-2">
+                  <h3 className="text-xl font-semibold  text-gray-900 mb-2">
                     {place.title}
                   </h3>
+                  <h2 className="text-m  text-gray-600 mb-2">
+                    {place.address}
+                  </h2>
                   <div className="flex flex-col items-center justify-between">
                     <span className="font-bold">${place.price}</span>
                     <span className="text-gray-500 text-sm">per night</span>
