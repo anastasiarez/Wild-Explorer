@@ -41,6 +41,7 @@ const ReviewList = () => {
 
   return (
     <div className="review-list">
+      
       <ReviewForm propertyId={propertyId} onReviewSubmit={handleReviewSubmit} />
       {reviews.length === 0 ? (
         <p>No reviews available for this property.</p>
@@ -52,3 +53,5 @@ const ReviewList = () => {
 };
 
 export default ReviewList;
+
+

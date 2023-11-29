@@ -6,33 +6,50 @@ export default function PlaceGallery({ place }) {
   if (showAllPhotos) {
 
     return (
-      <div className="absolute inset-0 bg-white min-h-screen" >
-        <div className="p-8 grid gap-4">
-          <div>
-            <h2 className="text-3xl mr-36">Photos of {place.title}</h2>
-            <button
-              onClick={() => setShowAllPhotos(false)}
-              className="fixed right-12 top-8 flex gap-2 py-2 px-4 rounded-2xl shadow shadow-black">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" class="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Close photos
-            </button>
-          </div>
-          {place?.photos?.length > 0 && place.photos.map(photo => (
-            <div>
-              <img src={'http://localhost:4000/uploads/' + photo} alt=""></img>
-            </div>
-          ))}
+      <div className="fixed inset-0 bg-white min-h-screen overflow-y-auto z-50">
+      <div className="p-8 grid gap-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-3xl">Photos of {place.title}</h2>
+          <button
+            onClick={() => setShowAllPhotos(false)}
+            className="flex items-center gap-2 py-2 px-4 rounded-full shadow hover:bg-gray-200 focus:outline-none focus:ring focus:border-blue-300"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+            Close photos
+          </button>
+        </div>
+        <div className="grid gap-4">
+          {place?.photos?.length > 0 &&
+            place.photos.map((photo, index) => (
+              <img
+                key={index}
+                src={"http://localhost:4000/uploads/" + photo}
+                alt={`Photo ${index + 1}`}
+                className="w-full  h-auto rounded-lg"
+              />
+            ))}
         </div>
       </div>
-    );
-  }
+    </div>
+  )}
 
   return (
 
     <div className="relative">
-      <div className=" grid gap-2 grid-cols-[2fr_1fr] rounded-3xl overflow-hidden">
+      <div className=" pt - 15 grid gap-2 grid-cols-[2fr_1fr] rounded-3xl overflow-hidden">
         <div>
           {place.photos?.[0] && (
             <div>

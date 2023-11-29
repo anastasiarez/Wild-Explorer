@@ -76,21 +76,33 @@ export default function PlacePage() {
   }
 
   return (
-    <div className="mt-4 bg-gray-100 -mx-8 px-8 pt-8">
-      <h1 className="text-3xl">{place.title}</h1>
+    <div className="mt-4 bg-gray-100 px-8 py-8 rounded-2xl">
+      <h1 className="text-3xl mb-4">{place.title}</h1>
 
-      <AddressLink>{place.address}</AddressLink>
+      <div className="mb-4">
+        <AddressLink style={{ fontSize: "1.2rem", fontWeight: "bold", color: "#333" }}>
+          {place.address}
+        </AddressLink>
+      </div>
+
       <PlaceGallery place={place} />
 
       <div className="mt-12 mb-20 grid gap-8 grid-cols-1 md:grid-cols-[2fr_1fr]">
         <div>
           <div className="my-4">
-            <h2 className="font-semibold text-2xl">Description</h2>
-            {place.description}
+            <h2 className="font-semibold text-2xl mb-5">Description</h2>
+            <p className="text-gray-700">{place.description}</p>
           </div>
-          Check-In: {place.checkIn} <br />
-          Check-out: {place.checkOut} <br />
-          Max number of guests: {place.maxGuests}
+          <p className="text-gray-700 mb-20">
+            Check-In: {place.checkIn} <br />
+            Check-out: {place.checkOut} <br />
+            Max number of guests: {place.maxGuests}
+          </p>
+          <h2 className="font-semibold text-2xl mb-5">Extra info & Rules
+          </h2>
+          <div className="mb-4">
+          <p className="text-gray-700">{place.extraInfo}</p>
+        </div>
         </div>
         <div>
           <BookingWidget place={place} />
@@ -98,19 +110,13 @@ export default function PlacePage() {
       </div>
 
       <div className="bg-white -mx-8 py-8 border-t">
-        <div>
-          <h2 className="font-semibold text-2xl">Extra Info</h2>{" "}
-        </div>
-        <div className="mb-4 mt-2 text-sm gray-gray-700 leading-5">
-          {" "}
-          {place.extraInfo}
-        </div>
-        {/* ReviewList component integration */}
+        
         <div className="reviews-section">
-          <h2 className="font-semibold text-2xl">Reviews</h2>
+          
           <ReviewList propertyId={propertyId || place._id} />
         </div>
       </div>
     </div>
   );
+
 }

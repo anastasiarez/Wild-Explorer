@@ -24,7 +24,7 @@ function excludeSingleDate(bookedDates) {
 
 }
 
-function removeDuplicates (dates) {
+function removeDuplicates(dates) {
   return [...new Set(dates.map(date => date.getTime()))].map(date => new Date(date)).sort((a, b) => a.getTime() - b.getTime());
 }
 
@@ -57,7 +57,7 @@ export default function BookingWidget({ place }) {
 
       }
       setBookedDates(excludeSingleDate(removeDuplicates(result)));
-      
+
     });
   }, []);
 
@@ -115,8 +115,6 @@ export default function BookingWidget({ place }) {
     }
   }
 
-
-
   const isPhoneNumberValid = (phoneNumber) => /^\d{10}$/.test(phoneNumber);
 
   const isFormValid = () => {
@@ -137,7 +135,7 @@ export default function BookingWidget({ place }) {
 
       <div className="border rounded-2xl mt-8">
         <div className="flex">
-          <div className="py-3 px-4">
+          <div className="py-5 px-5 border-l">
 
             <label>Check-In: </label>
             <ReactDatePicker
@@ -207,13 +205,14 @@ export default function BookingWidget({ place }) {
 
         <button
           onClick={bookThisPlace}
-          className={`primary mt-4 ${isFormValid() ? '' : 'disabled'}`}
+          className={`primary mt-4 mb-4 ${isFormValid() ? '' : 'disabled'}`}
           disabled={!isFormValid()}
           style={!isFormValid() ? { cursor: 'not-allowed', opacity: 0.6 } : {}}
         >
           Book for
           {numberOfNights > 0 && <span> ${numberOfNights * place.price}</span>}
         </button>
+
 
         {parseInt(numberOfGuests, 10) > maxGuests && (
           <div className="text-red-500 mt-2">

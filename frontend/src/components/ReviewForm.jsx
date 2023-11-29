@@ -36,16 +36,16 @@ const ReviewForm = ({ propertyId, onReviewSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
       <label>
-        Rating:
+        Give this place a rating:
         <input type="number" min="1" max="5" value={rating} onChange={handleRatingChange} />
       </label>
       <br />
       <label>
-        Comment:
+        Your thoughts about this place:
         <textarea value={comment} onChange={handleCommentChange} />
       </label>
       <br />
-      <button className='primary mt-4' type="submit">Submit Review</button>
+      <button className='primary mt-4' type="submit">Submit Your Review</button>
     </form>
   );
 };

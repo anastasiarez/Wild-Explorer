@@ -5,8 +5,7 @@ import ReactDatePicker from "react-datepicker";
 import AddressLink from "../AddressLink";
 import PlaceGallery from "../PlaceGallery";
 import { eachDayOfInterval, isWithinInterval, differenceInCalendarDays } from "date-fns";
-
-
+import BookingDates from "../BookingDates";
 
 
 export default function BookingPage() {
@@ -21,7 +20,7 @@ export default function BookingPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [booking, setBooking] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
- 
+
   const handleCancelBooking = () => {
     if (booking && booking._id) {
       axios.delete(`/bookings/${booking._id}`)
@@ -85,7 +84,7 @@ export default function BookingPage() {
     }
   }, [id]);
 
-  const numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
+  // const numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
 
 
   async function editBooking() {
@@ -127,109 +126,106 @@ export default function BookingPage() {
 
 
   return (
-    <div className="my-8">
-      <h1 className="text-3xl">{booking.place.title}</h1>
+    <div className="bg-white shadow p-4 rounded-2xl">
+      <h1 className="text-3xl text-center">{booking.place.title}</h1>
 
       <AddressLink className="my-2 block">{booking.place.address}</AddressLink>
       <div className="bg-gray-200 p-6 my-6 rounded-2xl flex items-center justify-between">
         <div>
-          <h2 className="text-2xl mb-4">Your booking information:</h2>
+          <h2 className="text-2xl text-center mb-10">Your booking information:</h2>
 
-          <div className="py-3 px-4">
-            <label>Check-In: </label>
-            <ReactDatePicker
-              excludeDates={bookedDates}
-              selected={new Date(checkIn)}
-              onSelect={(date) => setCheckIn(date)}
-              onChange={(date) => setCheckIn(date)}
-              minDate={new Date()}
-            />
-          </div>
+          <BookingDates booking={booking} className="ml-5 mb-4 mt-4 text-gray-700 flex gap-3 " />
 
-          <div className="py-3 px-4">
-            <label>Check-Out: </label>
-            <ReactDatePicker
-              excludeDates={bookedDates}
-              selected={new Date(checkOut)}
-              onSelect={(date) => setCheckOut(date)}
-              onChange={(date) => setCheckOut(date)}
-              minDate={checkIn || new Date()}
-            />
-          </div>
+          <div className="text-l">
+            <div className="flex items-center justify-between mb-10">
+              <div className="py-4 px-4">
+                <label>Check-in: </label>
+                <ReactDatePicker
+                  excludeDates={bookedDates}
+                  selected={new Date(checkIn)}
+                  onSelect={(date) => setCheckIn(date)}
+                  onChange={(date) => setCheckIn(date)}
+                  minDate={new Date()}
+                />
+              </div>
 
-          <div className="py-3 px-4">
-            <label>Number of guests: </label>
-            <input
-              type="number"
-              value={numberOfGuests}
-              onChange={(e) => setNumberOfGuests(e.target.value)}
-            />
-          </div>
+              <div className="py-4 px-4">
 
-          <div className="py-3 px-4">
-            <label>Your full name: </label>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
+                <label>Check-out: </label>
+                <ReactDatePicker
+                  excludeDates={bookedDates}
+                  selected={new Date(checkOut)}
+                  onSelect={(date) => setCheckOut(date)}
+                  onChange={(date) => setCheckOut(date)}
+                  minDate={checkIn || new Date()}
+                />
+              </div>
 
-          <div className="py-3 px-4">
-            <label>Phone Number: </label>
-            <input
-              type="tel"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              onBlur={() =>
-                !/^\d{10}$/.test(phone) && phone !== "" && setPhone("")
-              }
-            />
-            {!/^\d{10}$/.test(phone) && phone !== "" && (
-              <p>Please enter a 10-digit phone number</p>
-            )}
-          </div>
+              <div className="py-3 px-4">
+                <label>Number of guests: </label>
+                <input
+                  type="number"
+                  value={numberOfGuests}
+                  onChange={(e) => setNumberOfGuests(e.target.value)}
+                />
+              </div>
 
-          {successMessage && (
-            <div className="text-green-500 mt-2">{successMessage}</div>
-          )}
+              <div className="py-3 px-4">
+                <label>Name: </label>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
 
-          <button
-            onClick={editBooking}
-            className={`primary mt-4 ${isFormValid() ? "" : "disabled"}`}
-            disabled={!isFormValid() || numberOfGuests > maxGuests}
-            style={
-              !isFormValid() || numberOfGuests > maxGuests
-                ? { cursor: "not-allowed", opacity: 0.6 }
-                : {}
-            }
-          >
-            Update Your Booking
-          </button>
+              <div className="py-3 px-4">
+                <label>Phone number: </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  onBlur={() =>
+                    !/^\d{10}$/.test(phone) && phone !== "" && setPhone("")
+                  }
+                />
+                {!/^\d{10}$/.test(phone) && phone !== "" && (
+                  <p className="text-red-500 mt-2">Please enter a 10-digit phone number</p>
+                )}
+              </div>
 
-          {numberOfGuests > maxGuests && (
-            <div className="text-red-500 mt-2">
-              Number of guests exceeds the maximum allowed ({maxGuests} guests).
+              {successMessage && (
+                <div className="text-green-500 mt-2">{successMessage}</div>
+              )}
+
+              <button
+                onClick={editBooking}
+                className={`primary mt-4 ${isFormValid() ? "" : "disabled"}`}
+                disabled={!isFormValid() || numberOfGuests > maxGuests}
+                style={
+                  !isFormValid() || numberOfGuests > maxGuests
+                    ? { cursor: "not-allowed", opacity: 0.6 }
+                    : {}
+                }
+                 
+              >
+                Update Booking
+              </button>
+
+              {numberOfGuests > maxGuests && (
+                <div className="text-red-500 mt-2">
+                  Number of guests exceeds the maximum allowed ({maxGuests} guests).
+                </div>
+              )}
             </div>
-          )}
-        </div>
-
-        <div className="bg-primary p-6 text-white rounded-2xl">
-          <div>
-            {numberOfNights > 0 && (
-              <span> ${numberOfNights * booking.place.price}</span>
-            )}
           </div>
-          <div className="text-3xl"></div>
+          <PlaceGallery place={booking.place} />
+
+          <button onClick={handleCancelBooking} className="mt-10 mb-5 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
+            Cancel Booking
+          </button>
         </div>
       </div>
-      <PlaceGallery place={booking.place} />
-
-      <button onClick={handleCancelBooking} className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded">
-        Cancel Booking
-      </button>
-
     </div>
-
   );
-}
+}  
