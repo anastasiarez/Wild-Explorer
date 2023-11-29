@@ -29,8 +29,8 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
                   )}
                 </div>
                 <div className="p-4">
-                  <h2 className="text-sm text-gray-500 mb-2">{result.title}</h2>
-                  <h3 className="text-xl font-semibold mb-2">{result.address}</h3>
+                  <h2 className="text-l text-gray-500 mb-2">{result.title}</h2>
+                  <h3 className="text-m font-semibold mb-2">{result.address}</h3>
                   <div className="flex flex-col items-center justify-between">
                     <span className="font-bold">${result.price}</span>
                     <span className="text-gray-500 text-sm">per night</span>
@@ -39,7 +39,8 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
               </div>
             </Link>
           ))
-        ) : searchButtonClick && <p className="text-center text-black-500 mt-4 font-bold text-xl ">no search result found.</p>}
+        ) : searchButtonClick && <p className="text-center text-black-500 mt-4 font-bold text-xl ">No search result found. Please browse our other places</p>}
+        
         {places.length > 0 && searchResults.length === 0 ? (
           places.map((place) => (
             <Link key={place._id} to={`/place/${place._id}`}>
