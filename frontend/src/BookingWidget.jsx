@@ -79,6 +79,14 @@ export default function BookingWidget({ place }) {
   }
 
   async function bookThisPlace() {
+
+    if (!user) {
+      
+      alert('Please log in to book this place');
+      //navigate('/login');
+      return;
+    }
+
     if (parseInt(numberOfGuests, 10) > maxGuests) {
       return;
     }
