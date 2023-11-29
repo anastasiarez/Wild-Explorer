@@ -6,7 +6,7 @@ const Review = ({ review }) => {
 
   const { ready, user, setUser } = useContext(UserContext);
 
-  console.log("reviewreview", review);
+  console.log("review", review);
     const renderStarRating = () => {
         const rating = review.rating; // Assuming review.rating is a number between 1 and 5
         const maxRating = 5; // Maximum rating value
