@@ -1,12 +1,12 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-import { differenceInCalendarDays, eachDayOfInterval, isWithinInterval } from "date-fns";
-import { Navigate, useNavigate } from "react-router-dom";
+import { differenceInCalendarDays, eachDayOfInterval, addDays } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext.jsx";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-function excludeSingleDate(bookedDates) {
+export function excludeSingleDate(bookedDates) {
   const missingDates = [];
 
   for (let i = 0; i < bookedDates.length - 1; i++) {
@@ -20,11 +20,13 @@ function excludeSingleDate(bookedDates) {
       missingDates.push(...missingDatesInInterval);
     }
   }
+  console.log([...missingDates, ...bookedDates]);
+  console.log("booked", bookedDates);
   return [...missingDates, ...bookedDates];
 
 }
 
-function removeDuplicates(dates) {
+export function removeDuplicates(dates) {
   return [...new Set(dates.map(date => date.getTime()))].map(date => new Date(date)).sort((a, b) => a.getTime() - b.getTime());
 }
 
@@ -144,7 +146,7 @@ export default function BookingWidget({ place }) {
                 setCheckIn(date);
                 setErrorMessage(null);
               }}
-              minDate={new Date()}
+              minDate={addDays(new Date, 1)}
               excludeDates={bookedDates}
               dateFormat="yyyy/MM/dd"
             />
@@ -158,7 +160,7 @@ export default function BookingWidget({ place }) {
                 setCheckOut(date);
                 setErrorMessage(null);
               }}
-              minDate={checkIn || new Date()}
+              minDate={checkIn || addDays(new Date, 1)}
               excludeDates={bookedDates}
               dateFormat="yyyy/MM/dd"
             />

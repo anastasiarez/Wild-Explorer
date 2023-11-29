@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Review from './Review';
 import { getReviewsForProperty } from '../helpers/reviewsApi';
 import { useParams } from 'react-router-dom';
 import ReviewForm from './ReviewForm';
+import { UserContext } from '../UserContext';
 
 const ReviewList = () => {
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { id: propertyId } = useParams();
+  const { user } = useContext(UserContext);
 
   // Define fetchReviews outside useEffect
   const fetchReviews = async () => {
@@ -41,13 +43,14 @@ const ReviewList = () => {
 
   return (
     <div className="review-list">
-      
-      <ReviewForm propertyId={propertyId} onReviewSubmit={handleReviewSubmit} />
+
+      {user ? <ReviewForm propertyId={propertyId} onReviewSubmit={handleReviewSubmit} /> : null}
       {reviews.length === 0 ? (
         <p>No reviews available for this property.</p>
       ) : (
         reviews.map((review) => <Review key={review._id} review={review} />)
       )}
+
     </div>
   );
 };

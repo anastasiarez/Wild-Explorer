@@ -4,8 +4,9 @@ import axios from "axios";
 import ReactDatePicker from "react-datepicker";
 import AddressLink from "../AddressLink";
 import PlaceGallery from "../PlaceGallery";
-import { eachDayOfInterval, isWithinInterval, differenceInCalendarDays } from "date-fns";
+import { eachDayOfInterval, isWithinInterval, differenceInCalendarDays, addDays } from "date-fns";
 import BookingDates from "../BookingDates";
+import { excludeSingleDate, removeDuplicates } from "../BookingWidget";
 
 
 export default function BookingPage() {
@@ -20,6 +21,8 @@ export default function BookingPage() {
   const [maxGuests, setMaxGuests] = useState(1);
   const [booking, setBooking] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
 
   const handleCancelBooking = () => {
     if (booking && booking._id) {
@@ -67,7 +70,9 @@ export default function BookingPage() {
           });
         });
 
-        setBookedDates(excludeUserDates);
+        setBookedDates(excludeSingleDate(removeDuplicates(excludeUserDates)));
+
+        //setBookedDates(excludeUserDates);
         setMaxGuests(booking.place.maxGuests);
       });
     }
@@ -86,10 +91,14 @@ export default function BookingPage() {
 
   // const numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
 
-
+  const numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
   async function editBooking() {
     if (numberOfGuests > maxGuests) {
       console.error("Number of guests exceeds the maximum allowed.");
+      return;
+    }
+    if (numberOfNights < 2) {
+      setErrorMessage("Minimum booking duration is two nights.");
       return;
     }
 
@@ -144,8 +153,12 @@ export default function BookingPage() {
                   excludeDates={bookedDates}
                   selected={new Date(checkIn)}
                   onSelect={(date) => setCheckIn(date)}
-                  onChange={(date) => setCheckIn(date)}
-                  minDate={new Date()}
+                  onChange={date => {
+                    setCheckIn(date);
+                    setErrorMessage(null);
+                  }}
+                  minDate={addDays(new Date, 1)}
+
                 />
               </div>
 
@@ -156,8 +169,11 @@ export default function BookingPage() {
                   excludeDates={bookedDates}
                   selected={new Date(checkOut)}
                   onSelect={(date) => setCheckOut(date)}
-                  onChange={(date) => setCheckOut(date)}
-                  minDate={checkIn || new Date()}
+                  onChange={date => {
+                    setCheckOut(date);
+                    setErrorMessage(null);
+                  }}
+                  minDate={checkIn || addDays(new Date, 1)}
                 />
               </div>
 
@@ -198,6 +214,12 @@ export default function BookingPage() {
                 <div className="text-green-500 mt-2">{successMessage}</div>
               )}
 
+              {errorMessage && (
+                <div className="text-red-500 mt-2">
+                  {errorMessage}
+                </div>
+              )}
+
               <button
                 onClick={editBooking}
                 className={`primary mt-4 ${isFormValid() ? "" : "disabled"}`}
@@ -207,7 +229,7 @@ export default function BookingPage() {
                     ? { cursor: "not-allowed", opacity: 0.6 }
                     : {}
                 }
-                 
+
               >
                 Update Booking
               </button>
