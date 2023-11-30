@@ -13,7 +13,7 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
 
   return (
     <div>
-      <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      
         {searchResults.length > 0 ? (
           searchResults.map((result) => (
             <Link key={result._id} to={`/place/${result._id}`}>
@@ -44,6 +44,7 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
           places.map((place) => (
             <Link key={place._id} to={`/place/${place._id}`}>
               <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+              <div className="mt-8">
                 <div className="aspect-w-3 aspect-h-2">
                   {place.photos?.[0] && (
                     <img
@@ -62,9 +63,10 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
                   </h2>
                   <div className="flex flex-col items-center justify-between">
                     <span className="font-bold">${place.price}</span>
-                    <span className="text-gray-500 text-sm">per night</span>
+                    <span className="mb-8 text-gray-500 text-sm">per night</span>
                   </div>
                 </div>
+              </div>
               </div>
             </Link>
           ))
@@ -74,7 +76,7 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
           </p>
         )}
       </div>
-    </div>
+ 
   );
 };
 
