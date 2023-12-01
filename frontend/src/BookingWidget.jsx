@@ -6,6 +6,11 @@ import { UserContext } from "./UserContext.jsx";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import StripeCheckout from 'react-stripe-checkout';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const bookingAlert = withReactContent(Swal);
+
 export function excludeSingleDate(bookedDates) {
   const missingDates = [];
 
@@ -20,9 +25,7 @@ export function excludeSingleDate(bookedDates) {
       missingDates.push(...missingDatesInInterval);
     }
   }
-
   return [...missingDates, ...bookedDates];
-
 }
 
 export function removeDuplicates(dates) {
@@ -44,7 +47,8 @@ export default function BookingWidget({ place }) {
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-  //const [redirect, setRedirect] = useState('');
+
+  const stripePublicKey = 'pk_test_51O3kBxGTAB6CtxdhKOcpMUBtDiJc0XCrsWoEOB2BKBqxxszz8XsU0PwykGvtZsezvFeFyd1bXyYDmlscVNqAFh6G00ZedrV42z';
 
   useEffect(() => {
     axios.get(`/bookings/${place._id}`).then(response => {
@@ -78,10 +82,22 @@ export default function BookingWidget({ place }) {
     numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
   }
 
+  const handleSuccess = () => {
+    bookingAlert.fire({
+      icon: 'success',
+      title: 'Payment was successful',
+    });
+  };
+  const handleFailure = () => {
+    bookingAlert.fire({
+      icon: 'error',
+      title: 'Payment was not successful',
+    });
+  };
+
   async function bookThisPlace() {
 
     if (!user) {
-      
       alert('Please log in to book this place');
       //navigate('/login');
       return;
@@ -91,12 +107,12 @@ export default function BookingWidget({ place }) {
       return;
     }
 
-    try {
-      if (numberOfNights < 2) {
-        setErrorMessage("Minimum booking duration is two nights.");
-        return;
-      }
+    if (numberOfNights < 2) {
+      setErrorMessage("Minimum booking duration is two nights.");
+      return;
+    }
 
+    try {
       const response = await axios.post('/bookings', {
         checkIn,
         checkOut,
@@ -107,6 +123,10 @@ export default function BookingWidget({ place }) {
         price: numberOfNights * place.price,
       });
 
+      if (response.status === 200) {
+        handleSuccess();
+      }
+
       const newBookingId = response.data._id;
 
       setBookingSuccess(true);
@@ -116,10 +136,10 @@ export default function BookingWidget({ place }) {
         navigate(`/account/bookings/`);
       }, 1000);
 
-
     }
     catch (error) {
       console.error("Failed to book:", error);
+      handleFailure();
       setErrorMessage("Please register or loging");
     }
   }
@@ -151,7 +171,12 @@ export default function BookingWidget({ place }) {
               selected={checkIn}
               onChange={date => {
                 setCheckIn(date);
-                setErrorMessage(null);
+                const nights = differenceInCalendarDays(new Date(checkOut), date);
+                if (nights < 2) {
+                  setErrorMessage("Minimum booking duration is two nights.");
+                } else {
+                  setErrorMessage(null);
+                }
               }}
               minDate={addDays(new Date, 1)}
               excludeDates={bookedDates}
@@ -165,7 +190,12 @@ export default function BookingWidget({ place }) {
               selected={checkOut}
               onChange={date => {
                 setCheckOut(date);
-                setErrorMessage(null);
+                const nights = differenceInCalendarDays(date, new Date(checkIn));
+                if (nights < 2) {
+                  setErrorMessage("Minimum booking duration is two nights.");
+                } else {
+                  setErrorMessage(null);
+                }
               }}
               minDate={checkIn || addDays(new Date, 1)}
               excludeDates={bookedDates}
@@ -212,16 +242,18 @@ export default function BookingWidget({ place }) {
           )}
         </div>
 
-        <button
+        <StripeCheckout
           onClick={bookThisPlace}
           className={`primary mt-4 mb-4 ${isFormValid() ? '' : 'disabled'}`}
-          disabled={!isFormValid()}
+          disabled={!isFormValid() || numberOfNights < 2}
           style={!isFormValid() ? { cursor: 'not-allowed', opacity: 0.6 } : {}}
-        >
-          Book for
-          {numberOfNights > 0 && <span> ${numberOfNights * place.price}</span>}
-        </button>
-
+          stripeKey={stripePublicKey}
+          label="Book Now"
+          name="Pay With Credit Card"
+          amount={numberOfNights * place.price * 100}
+          description={`Your total is $${numberOfNights * place.price}`}
+          token={bookThisPlace}
+        />
 
         {parseInt(numberOfGuests, 10) > maxGuests && (
           <div className="text-red-500 mt-2">
