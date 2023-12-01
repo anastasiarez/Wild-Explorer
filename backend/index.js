@@ -78,28 +78,9 @@ function getUserDataFromReq(req) {
     );
   });
 }
-////// STRIPE //////
-
-app.post('/place/:id/process-payment', async (req, res) => {
-  const { token, amount } = req.body;
-
-  try {
-    await stripe.charges.create({
-      source: token.id,
-      amount,
-      currency: "CAD"
-    });
-
-    res.json({ status: 'Success' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to process payment' });
-  }
-});
 
 
 ////////  REGISTER, LOGIN/LOGOUT & PROFILE  ///////////
-
 
 app.post("/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
