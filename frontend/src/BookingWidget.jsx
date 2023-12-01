@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { differenceInCalendarDays, eachDayOfInterval, addDays } from "date-fns";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "./UserContext.jsx";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -99,7 +99,7 @@ export default function BookingWidget({ place }) {
 
     if (!user) {
       alert('Please log in to book this place');
-      //navigate('/login');
+      navigate('/login');
       return;
     }
 
@@ -172,8 +172,10 @@ export default function BookingWidget({ place }) {
               onChange={date => {
                 setCheckIn(date);
                 const nights = differenceInCalendarDays(new Date(checkOut), date);
+
                 if (nights < 2) {
                   setErrorMessage("Minimum booking duration is two nights.");
+
                 } else {
                   setErrorMessage(null);
                 }
@@ -193,6 +195,7 @@ export default function BookingWidget({ place }) {
                 const nights = differenceInCalendarDays(date, new Date(checkIn));
                 if (nights < 2) {
                   setErrorMessage("Minimum booking duration is two nights.");
+
                 } else {
                   setErrorMessage(null);
                 }
@@ -245,10 +248,10 @@ export default function BookingWidget({ place }) {
         <StripeCheckout
           onClick={bookThisPlace}
           className={`primary mt-4 mb-4 ${isFormValid() ? '' : 'disabled'}`}
-          disabled={!isFormValid() || numberOfNights < 2}
+          disabled={!isFormValid() || numberOfNights < 2 || !user}
           style={!isFormValid() ? { cursor: 'not-allowed', opacity: 0.6 } : {}}
           stripeKey={stripePublicKey}
-          label="Book Now"
+          label={"Book for $" + (numberOfNights * place.price)}
           name="Pay With Credit Card"
           amount={numberOfNights * place.price * 100}
           description={`Your total is $${numberOfNights * place.price}`}
@@ -260,11 +263,18 @@ export default function BookingWidget({ place }) {
             Number of guests exceeds the maximum allowed ({maxGuests} guests).
           </div>
         )}
-        {bookingSuccess && (
+        {bookingSuccess ? (
           <div className="text-green-500 mt-2">
             Success! You are going to travel now!
           </div>
+        ) : null}
+
+        {!user && (
+          <div className="text-red-500 mt-2">
+             <Link to="/login" className="text-blue-500"> Please Register or Login</Link>
+          </div>
         )}
+
         {errorMessage && (
           <div className="text-red-500 mt-2">
             {errorMessage}
