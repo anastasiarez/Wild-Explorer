@@ -9,8 +9,10 @@ Wild-Explorer: Elevate your escapes. Unlock exclusive reservations for exception
 * Login User
 * Account User 
     - My Profile 
-    - My Bookings : Save, Delete,Modify, Review.
-    - My places : Save, Edit, Upload Photos,Delete Photo, Mark Photo as primary.
+    - My Bookings : Book, Modify, Delete, Review.
+    - Book with Stripe Payment
+    - Calendar Dates Picker
+    - My Places : Create, Edit, Upload Photos, Delete Photo, Mark Photo as primary.
 * Logout User
 
 
