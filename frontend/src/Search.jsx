@@ -60,8 +60,7 @@ const Search = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
         <button
           type="button"
           className="bg-primary text-white px-6 py-2 rounded-full hover:bg-opacity-80 focus:outline-none"
-          onClick={handleSearchSubmit}
-        >
+          onClick={handleSearchSubmit}>
           Search
         </button>
       </div>

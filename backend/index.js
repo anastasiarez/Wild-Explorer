@@ -1,28 +1,23 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
-const bcryptSalt = bcrypt.genSaltSync(10);
+
 const jsonWebToken = require("jsonwebtoken");
 const jwtSecret = "fnr;nva4o5awbew/cvae";
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
-const imageDownloader = require("image-downloader");
-const multer = require("multer");
-const fs = require("fs");
 
-const Place = require("./models/Place.js");
-
-
-const Review = require("./models/Review.js");
 const reviewsRouter = express.Router();
 
-const testRouter = require('./routes/test.js');
-const booking = require("./routes/booking.js");
-const user = require("./routes/user.js");
-
-
-
+//const testRouter = require("./routes/test");
+const booking = require("./routes/booking");
+const user = require("./routes/user");
+const profile = require("./routes/profile");
+const place = require("./routes/place");
+const unauthreview = require("./routes/unauthreview");
+const authreview = require("./routes/authreview");
+const upload = require("./routes/upload");
+const index = require("./routes/index");
 
 // Routes
 const app = express();
@@ -38,10 +33,6 @@ app.use(
     origin: "http://localhost:5173",
   })
 );
-
-
-
-
 
 // Move the database connection outside of the route handlers
 mongoose.connect(process.env.MONGO_URL, {
@@ -59,9 +50,11 @@ db.once("open", () => {
 });
 
 const jwtmiddleWare = (req, res, next) => {
-console.log("inside jwtmiddleware");
+  console.log("inside jwtmiddleware");
   if (!req.cookies || !req.cookies.token) {
-    return res.status(401).json({ error: "Unauthorized, no valid token provided" });
+    return res
+      .status(401)
+      .json({ error: "Unauthorized, no valid token provided" });
   }
   jsonWebToken.verify(
     req.cookies.token,
@@ -70,22 +63,20 @@ console.log("inside jwtmiddleware");
     async (err, userData) => {
       if (err) {
         // Properly reject the promise if an error occurred during verification
-        return res.status(401).json({ error: err.message});
+        return res.status(401).json({ error: err.message });
       }
       res.locals.userData = userData;
       console.log("inside jwtmiddleware verified.");
       next();
     }
   );
-
-
-}
+};
 
 function getUserDataFromReq(req) {
   return new Promise((resolve, reject) => {
     if (!req.cookies || !req.cookies.token) {
       // If the token doesn't exist in cookies, reject the promise
-      return reject(new Error('No token provided'));
+      return reject(new Error("No token provided"));
     }
 
     jsonWebToken.verify(
@@ -103,310 +94,27 @@ function getUserDataFromReq(req) {
   });
 }
 
-////////  BOOKINGS  ///////////
-
 //end points for test page
 //app.use('/screen', jwtmiddleWare, testRouter);
-app.use('/bookings', jwtmiddleWare, booking);
-
+////booking///////
+app.use("/bookings", jwtmiddleWare, booking);
 
 ////////  REGISTER, LOGIN/LOGOUT & PROFILE  ///////////
-app.use('/user', jwtmiddleWare, user);
-
-
-
-
-////////  UPLOAD IMG-S  ///////////
-
-//download images from the web to a local destination
-app.post("/upload-by-link", async (req, res) => {
-  const { link } = req.body;
-  const newName = "photo" + Date.now() + ".jpg";
-  await imageDownloader.image({
-    url: link,
-    dest: __dirname + "/uploads/" + newName,
-  });
-  res.json(newName);
-});
-
-// to store files locally
-const photosMiddleware = multer({ dest: "uploads" });
-app.post("/upload", photosMiddleware.array("photos", 100), (req, res) => {
-
-  const uploadedFiles = [];
-  for (let i = 0; i < req.files.length; i++) {
-    const { path, originalname } = req.files[i];
-    const parts = originalname.split(".");
-    const ext = parts[parts.length - 1];
-    const newPath = path + "." + ext;
-
-    fs.renameSync(path, newPath);
-    uploadedFiles.push(newPath.replace("uploads/", ""));
-  }
-  res.json(uploadedFiles);
-});
-
+app.use("/user", user);
+app.use("/user", jwtmiddleWare, profile);
 
 ////////  PLACES  ///////////
+app.use("/places", jwtmiddleWare, place);
 
-app.post("/places", (req, res) => {
+// review
+app.use("/reviews", unauthreview);
+app.use("/reviews", jwtmiddleWare, authreview);
 
-  const { token } = req.cookies;
-  const {
-    title,
-    address,
-    addedPhotos,
-    description,
-    price,
-    perks,
-    extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
-  } = req.body;
-  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err;
+//upload
+app.use("/upload", upload);
 
-    try {
-      const placeDoc = await Place.create({
-        owner: userData.id,
-        title,
-        address,
-        photos: addedPhotos,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        price,
-      });
-
-
-      res.json(placeDoc); // previous part run up to here
-    } catch (error) {
-      console.error("Error creating place:", error);
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
-});
-
-app.get("/places/:id", async (req, res) => {
-  const { id } = req.params;
-  res.json(await Place.findById(id));
-});
-
-app.put("/places/:id", async (req, res) => {
-  const { token } = req.cookies;
-  const { id } = req.params;
-  const {
-    title,
-    address,
-    addedPhotos,
-    description,
-    price,
-    perks,
-    extraInfo,
-    checkIn,
-    checkOut,
-    maxGuests,
-  } = req.body;
-  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-    if (err) throw err;
-    const placeDoc = await Place.findById(id);
-    if (userData.id === placeDoc.owner.toString()) {
-      placeDoc.set({
-        title,
-        address,
-        photos: addedPhotos,
-        description,
-        perks,
-        extraInfo,
-        checkIn,
-        checkOut,
-        maxGuests,
-        price,
-      });
-      await placeDoc.save();
-      res.json("ok");
-    }
-  });
-});
-
-app.get("/user-places", (req, res) => {
-  const { token } = req.cookies;
-  jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
-    const { id } = userData;
-    res.json(await Place.find({ owner: id }));
-  });
-});
-
-app.get("/search-places", async (req, res) => {
-  try {
-    const { query } = req.query;
-
-    if (!query) {
-      return res.status(400).json({ error: "Search query is missing." });
-    }
-
-    const properties = await Place.find({
-      $or: [
-        { title: { $regex: query, $options: "i" } },
-        { address: { $regex: query, $options: "i" } },
-      ],
-    });
-
-    res.json(properties);
-  } catch (error) {
-    console.error("Error", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-
-
-app.get('/places', async (req, res) => {
-  res.json(await Place.find());
-});
-
-
-
-
-
-// Create a new review
-app.post("/reviews", jwtmiddleWare, async (req, res) => {
-  try {
-    const { property, rating, comment } = req.body;
-    // let userData = null;
-    const userData = res.locals.userData;
-
-
-    // try {
-    //   userData = await getUserDataFromReq(req);
-    // } catch (error) {
-    //   return res.status(401).json({ error: "Unauthorized, no valid token provided" });
-    // }
-
-    // Check if the user is authenticated
-    // if (!userData) {
-    //   return res.status(401).json({ error: "Unauthorized" });
-    // }
-
-    // Use Review.create to directly create and save the review in the database
-    const savedReview = await Review.create({
-      user: userData.id,
-      property: property,
-      rating: rating,
-      comment: comment,
-    });
-
-    // Respond with the saved review
-    res.status(201).json(savedReview);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
-
-
-// Get reviews for a specific property
-app.get("/property/:propertyId", async (req, res) => {
-  try {
-    const { propertyId } = req.params;
-
-    // Find all reviews for the specified property
-    const reviews = await Review.find({ property: propertyId })
-      .populate("user", "username")
-      .sort({ createdAt: -1 });
-
-    // Respond with the reviews
-    res.json(reviews);
-  } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-app.patch('/:reviewId', jwtmiddleWare, async (req, res) => {
-    try {
-        const { reviewId } = req.params;
-        const { rating, comment } = req.body;
-        //const userData = await getUserDataFromReq(req); // Your authentication logic to get user data
-
-        const userData = res.locals.userData;
-
-        // Validate user data and check if they are the owner of the review
-        // if (!userData) {
-        //     return res.status(401).json({ error: 'Unauthorized' });
-        // }
-
-        // Optional validation checks
-        if (rating < 1 || rating > 5 || !comment.trim()) {
-            return res.status(400).json({
-                error: 'Invalid rating or comment'
-            });
-        }
-
-        // Check if the user is the owner of the review
-        const existingReview = await Review.findById(reviewId);
-        if (!existingReview) {
-            return res.status(404).json({ error: 'Review not found' });
-        }
-        if (existingReview.user.toString() !== userData.userId) {
-            return res.status(403).json({ error: 'Forbidden' });
-        }
-
-        // Update the review in the database
-        const updatedReview = await Review.findByIdAndUpdate(
-            reviewId,
-            { rating, comment },
-            { new: true } // Return the updated document
-        );
-
-        // Respond with the updated review
-        res.json(updatedReview);
-    } catch (error) {
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
-// Delete a review
-app.delete('/:reviewId', jwtmiddleWare, async (req, res) => {
-    try {
-        const { reviewId } = req.params;
-        //const userData = await getUserDataFromReq(req); // Your authentication logic to get user data
-        const userData = res.locals.userData;
-
-        // if (!userData) {
-        //     return res.status(401).json({ error: 'Unauthorized' });
-        // }
-      // Find the review to ensure it exists and to check ownership
-        const reviewToDelete = await Review.findById(reviewId);
-        if (!reviewToDelete) {
-            return res.status(404).json({ error: 'Review not found' });
-        }
-
-        // Check if the user is the owner of the review or an admin
-        if (reviewToDelete.user.toString() !== userData.userId) {
-            return res.status(403).json({ error: 'Forbidden' });
-        }
-
-        // Delete the review from the database
-        const deletedReview = await Review.findByIdAndDelete(reviewId);
-
-        // Respond with success message
-        res.json({ message: 'Review successfully deleted', deletedReview });
-    } catch (error) {
-        if (error.kind === 'ObjectId') {
-            return res.status(400).json({ error: 'Invalid review ID format' });
-        }
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
-
+app.use("/", index);
 
 app.listen(4000, () => {
   console.log("Server is running on port 4000");
-});
-
-app.get("/test", (req, res) => {
-  res.json("test ok");
 });
