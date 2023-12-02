@@ -6,7 +6,7 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
-    axios.get("/places").then((response) => {
+    axios.get("/public/places").then((response) => {
       setPlaces(response.data);
     });
   }, []);
