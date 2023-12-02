@@ -20,7 +20,6 @@ router.post("/upload-by-link", async (req, res) => {
   // to store files locally
   const photosMiddleware = multer({ dest: __dirname + "/../uploads/" });
   router.post("/", photosMiddleware.array("photos", 100), (req, res) => {
-    console.log("Upload file,", req.files)
 
     const uploadedFiles = [];
     for (let i = 0; i < req.files.length; i++) {

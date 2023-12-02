@@ -6,7 +6,6 @@ const Review = require("../models/Review");
 router.get("/property/:propertyId", async (req, res) => {
   try {
     const { propertyId } = req.params;
-    console.log("GET request to /reviews/property/:propertyId", req.params);
 
     // Find all reviews for the specified property
     const reviews = await Review.find({ property: propertyId })

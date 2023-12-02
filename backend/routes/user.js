@@ -11,7 +11,6 @@ const jwtSecret = "fnr;nva4o5awbew/cvae";
 router.post("/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { name, email, password } = req.body;
-  console.log("name, email, password", req.body);
 
   try {
     const userDoc = await User.create({

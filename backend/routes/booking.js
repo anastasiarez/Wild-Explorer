@@ -6,7 +6,6 @@ const app = express();
 router.post("/", async (req, res) => {
   //const userData = await getUserDataFromReq(req);
   const userData = res.locals.userData;
-  console.log("User data inside /bookings,", userData);
   const { place, checkIn, checkOut, numberOfGuests, name, phone, price } =
     req.body;
   Booking.create({

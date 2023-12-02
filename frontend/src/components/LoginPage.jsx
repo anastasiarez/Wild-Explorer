@@ -19,7 +19,7 @@ const LoginPage = () => {
 
     try {
       const data = await axios.post("/user/login", { email, password });
-      //console.log('Login response:', response);
+      
 
       setUser(data.data);
       setRedirect(true);

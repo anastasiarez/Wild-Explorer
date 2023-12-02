@@ -6,7 +6,6 @@ const jsonWebToken = require("jsonwebtoken");
 const jwtSecret = "fnr;nva4o5awbew/cvae";
 
 router.get("/search-places", async (req, res) => {
-  console.log("We are here", req.query);
   try {
     const { query } = req.query;
 

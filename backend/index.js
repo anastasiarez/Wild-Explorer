@@ -60,7 +60,7 @@ db.once("open", () => {
 });
 
 const jwtmiddleWare = (req, res, next) => {
-  console.log("inside jwtmiddleware");
+
   if (!req.cookies || !req.cookies.token) {
     return res
       .status(401)
@@ -76,7 +76,6 @@ const jwtmiddleWare = (req, res, next) => {
         return res.status(401).json({ error: err.message });
       }
       res.locals.userData = userData;
-      console.log("inside jwtmiddleware verified.");
       next();
     }
   );
@@ -117,7 +116,6 @@ app.use("/user", jwtmiddleWare, profile);
 app.use("/places", jwtmiddleWare, place);
 
 app.get("/public/places", async (req, res) => {
-  console.log("I am here")
   res.json(await Place.find());
 });
 
