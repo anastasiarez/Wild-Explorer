@@ -22,10 +22,12 @@ export default function ProfilePage() {
         setRedirect("/");
         setUser(null);
     }
+    
 
-    if (!ready) {
-        return "Loading...";
-    }
+    // if (!user && !ready) {
+    //     return "Loading...";
+    // }
+    console.log("Are we ready......");
 
     if (ready && !user && !redirect) {
         return <Navigate to={"/login"} />;
