@@ -21,6 +21,7 @@ const PlacesFormPage = () => {
   const [redirect, setRedirect] = useState(false);
   const [price, setPrice] = useState(100);
   const [formErrors, setFormErrors] = useState({});
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const validateForm = () => {
     let isValid = true;
@@ -49,10 +50,24 @@ const PlacesFormPage = () => {
     setFormErrors(errors);
     return isValid;
   };
-  useEffect(() => {
-    validateForm();
-    console.log("errors", formErrors);
-  }, [formErrors]);
+
+  const handleTitleChange = (e) => {
+    const newTitle = e.target.value;
+    setTitle(newTitle);
+
+    let newErrors = { ...formErrors };
+
+    if (!newTitle.trim()) {
+      newErrors.title = "Please enter the title.";
+    } else if (newTitle.length < 3) {
+      newErrors.titleLength = "Title should have more than three characters.";
+    } else {
+      delete newErrors.title;
+      delete newErrors.titleLength;
+    }
+
+    setFormErrors(newErrors);
+  };
 
   useEffect(() => {
     if (!id) {
@@ -79,25 +94,35 @@ const PlacesFormPage = () => {
     <p className="text-gray-500 text-sm mt-1 mb-4">{text}</p>
   );
 
-  const inputValue = (header, description, inputField, errors) => (
+  const inputValue = (
+    header,
+    description,
+    inputField,
+    errors,
+    submitAttempted
+  ) => (
     <div className="mb-6">
       {inputHeader(header)}
       {inputDescription(description)}
       {inputField}
-      {
-        <div className="text-red-500">
-          {errors.map((error, index) => (
-            <span key={index}>{error}</span>
-          ))}
-        </div>
-      }
+      {submitAttempted &&
+        errors &&
+        errors.map(
+          (error, index) =>
+            error && (
+              <div className="text-red-500" key={index}>
+                {error}
+              </div>
+            )
+        )}
     </div>
   );
 
   const SavePlace = async (e) => {
     e.preventDefault();
-    const isValid = Object.keys(formErrors).length === 0;
-    console.log(formErrors);
+    //const isValid = Object.keys(formErrors).length === 0;
+    setSubmitAttempted(true);
+    const isValid = validateForm();
 
     const data = {
       title,
@@ -112,8 +137,8 @@ const PlacesFormPage = () => {
       price,
     };
     if (!isValid) {
-      console.log(formErrors); // Display validation errors for debugging
-      return; // Stop the SavePlace function if validation failed
+      console.log("Form is not valid. Please review the errors:", formErrors);
+      return; // Don't proceed if the form is invalid
     }
 
     if (id) {
@@ -139,11 +164,12 @@ const PlacesFormPage = () => {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={handleTitleChange}
             placeholder="Title, e.g., My Lovely Apartment"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
           />,
-          [formErrors.title, formErrors.titleLength]
+          [formErrors.title || null, formErrors.titleLength || null],
+          submitAttempted
         )}
 
         {inputValue(
@@ -156,14 +182,16 @@ const PlacesFormPage = () => {
             placeholder="Address"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
           />,
-          []
+          [],
+          submitAttempted
         )}
 
         {inputValue(
           "Photo",
           "",
           <PhotoUploader addedPhotos={addedPhotos} onChange={setAddedPhotos} />,
-          []
+          [],
+          submitAttempted
         )}
 
         {inputValue(
@@ -175,7 +203,8 @@ const PlacesFormPage = () => {
             placeholder="Description"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
           />,
-          []
+          [],
+          submitAttempted
         )}
 
         {inputValue(
@@ -184,7 +213,8 @@ const PlacesFormPage = () => {
           <div className="grid mt-2 gap-2 grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
             <Perks selected={perks} onChange={setPerks} />
           </div>,
-          []
+          [],
+          submitAttempted
         )}
 
         {inputValue(
@@ -196,7 +226,8 @@ const PlacesFormPage = () => {
             placeholder="Extra info & Rules"
             className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
           />,
-          []
+          [],
+          submitAttempted
         )}
 
         {inputValue(
@@ -233,7 +264,8 @@ const PlacesFormPage = () => {
               />
             </div>
           </div>,
-          []
+          [],
+          submitAttempted
         )}
 
         {inputValue(
@@ -248,7 +280,8 @@ const PlacesFormPage = () => {
               className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary"
             />
           </div>,
-          []
+          [],
+          submitAttempted
         )}
 
         <div className="mt-8">
