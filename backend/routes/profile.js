@@ -11,6 +11,7 @@ const jwtSecret = "fnr;nva4o5awbew/cvae";
 router.get("/profile", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { token } = req.cookies;
+  
   if (token) {
     jsonWebToken.verify(token, jwtSecret, {}, async (err, userData) => {
       if (err) throw err;
