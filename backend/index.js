@@ -18,6 +18,13 @@ const unauthreview = require("./routes/unauthreview");
 const authreview = require("./routes/authreview");
 const upload = require("./routes/upload");
 const index = require("./routes/index");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const bodyParser = require('body-parser');
+
+const path = require('path');
+const { token } = require("morgan");
+const { log } = require("console");
+const port = process.env.PORT || 5173;
 
 // Routes
 const app = express();
@@ -27,6 +34,8 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 //middleware
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     credentials: true,

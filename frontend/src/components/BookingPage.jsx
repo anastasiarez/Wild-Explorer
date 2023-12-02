@@ -8,6 +8,9 @@ import { eachDayOfInterval, isWithinInterval, differenceInCalendarDays, addDays 
 import BookingDates from "../BookingDates";
 import { excludeSingleDate, removeDuplicates } from "../BookingWidget";
 
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+const bookingAlert = withReactContent(Swal);
 
 export default function BookingPage() {
   const navigate = useNavigate();
@@ -29,18 +32,19 @@ export default function BookingPage() {
       axios.delete(`/bookings/${booking._id}`)
         .then(() => {
 
-          console.log("Booking cancelled successfully");
-
           setBooking(null);
-          alert('Booking has been cancelled');; // Set the message here
+          bookingAlert.fire({
+            icon: 'success',
+            title: 'Booking has been cancelled. Please expect a full refund within 7 business days',
+          });
           navigate("/account/bookings/");
-
-
         })
         .catch(error => {
           console.error("Error cancelling booking:", error);
-          alert('Failed to cancel booking'); // Set an error message if cancellation fails
-
+          bookingAlert.fire({
+            icon: 'error',
+            title: 'Failed to cancel booking. Please try again',
+          });
         });
     }
   };
@@ -88,8 +92,6 @@ export default function BookingPage() {
       });
     }
   }, [id]);
-
-  // const numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
 
   const numberOfNights = differenceInCalendarDays(new Date(checkOut), new Date(checkIn));
   async function editBooking() {
