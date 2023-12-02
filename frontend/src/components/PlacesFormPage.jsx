@@ -31,7 +31,8 @@ const PlacesFormPage = () => {
       isValid = false;
     }
     if (title.length < 3) {
-      errors.titleLength = "title should have more than three characters.";
+      errors.titleLength = "Title should have more than three characters.";
+      isValid = false;
     }
 
     if (maxGuests <= 0) {
@@ -46,11 +47,12 @@ const PlacesFormPage = () => {
 
     // Update the formErrors state
     setFormErrors(errors);
+    return isValid;
   };
   useEffect(() => {
     validateForm();
     console.log("errors", formErrors);
-  }, [title]);
+  }, [formErrors]);
 
   useEffect(() => {
     if (!id) {
@@ -82,9 +84,13 @@ const PlacesFormPage = () => {
       {inputHeader(header)}
       {inputDescription(description)}
       {inputField}
-      {errors.map((error) => (
-        <span>{error}</span>
-      ))}
+      {
+        <div className="text-red-500">
+          {errors.map((error, index) => (
+            <span key={index}>{error}</span>
+          ))}
+        </div>
+      }
     </div>
   );
 
