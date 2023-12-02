@@ -6,6 +6,7 @@ const jsonWebToken = require("jsonwebtoken");
 const jwtSecret = "fnr;nva4o5awbew/cvae";
 const cookieParser = require("cookie-parser");
 require("dotenv").config();
+const Place = require("./models/Place");
 
 const reviewsRouter = express.Router();
 
@@ -114,6 +115,11 @@ app.use("/user", jwtmiddleWare, profile);
 
 ////////  PLACES  ///////////
 app.use("/places", jwtmiddleWare, place);
+
+app.get("/public/places", async (req, res) => {
+  console.log("I am here")
+  res.json(await Place.find());
+});
 
 // review
 app.use("/reviews", unauthreview);
