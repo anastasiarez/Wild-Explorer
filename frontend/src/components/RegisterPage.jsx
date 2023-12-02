@@ -1,12 +1,14 @@
 import { Link, Navigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
+import { UserContext } from "../UserContext";
 
 const RegisterPage = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [redirect, setRedirect] = useState(false);
+    const { setUser } = useContext(UserContext);
 
     const registerUser = async (e) => {
         e.preventDefault();
@@ -32,6 +34,14 @@ const RegisterPage = () => {
 
             // Log in the user after successful registration
             const loginData = await axios.post("/user/login", { email, password });
+
+                axios.get('/user/profile')
+                  .then(({ data }) => {
+                    setUser(data);
+
+                  }).catch((e)=> {
+                    console.log("error", e);
+                  })
 
 
             setRedirect(true);
