@@ -87,7 +87,10 @@ router.put("/:id", async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
+  
   res.json(await Place.find());
 });
+
+
 
 module.exports = router;
