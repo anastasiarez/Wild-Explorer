@@ -12,7 +12,7 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
   }, []);
 
   return (
-    <div>
+    <div >
       {searchResults.length > 0 ? (
         <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {searchResults.map((result) => (
@@ -45,15 +45,15 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
         </div>
       )}
 
-      <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
         {places.length > 0 && searchResults.length === 0 ? (
           places.map((place) => (
             <Link key={place._id} to={`/place/${place._id}`}>
-              <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300 ease-in-out transform hover:scale-105">
+              <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg hover:bg-[#d9e7cb] transition duration-300 ease-in-out transform hover:scale-105">
                 <div className="aspect-w-3 aspect-h-2">
                   {place.photos?.[0] && (
                     <img
-                      className="object-cover w-full h-full"
+                      className="object-cover w-225 h-225"
                       src={`http://localhost:4000/uploads/${place.photos?.[0]}`}
                       alt=""
                     />
