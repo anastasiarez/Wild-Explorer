@@ -8,6 +8,7 @@ const Header = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
   const location = useLocation();
 
   return (
+    
     <>
       <div className="">
         {/* LOGO */}
