@@ -13,12 +13,13 @@ export default function PlacePage() {
   const [place, setPlace] = useState(null);
   const [showAllPhotos, setShowAllPhotos] = useState(false);
   const [filteredPlaces, setFilteredPlaces] = useState([]);
+  console.log("I am in placepage", place);
 
   useEffect(() => {
     if (!id) {
       return;
     }
-    axios.get(`/places/${id}`).then(response => {
+    axios.get(`/public/places/${id}`).then(response => {
       setPlace(response.data);
     });
   }, [id]);
