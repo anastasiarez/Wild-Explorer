@@ -115,6 +115,12 @@ app.use("/user", jwtmiddleWare, profile);
 ////////  PLACES  ///////////
 app.use("/places", jwtmiddleWare, place);
 
+app.get("/public/places/:id", async (req, res) => {
+  const { id } = req.params;
+  res.json(await Place.findById(id));
+});
+
+
 app.get("/public/places", async (req, res) => {
   res.json(await Place.find());
 });
