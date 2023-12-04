@@ -1,5 +1,5 @@
 const Perks = ({ selected, onChange }) => {
-
+  //console.log("I am inside of perks", selected, onChange);
   function handleClick(e) { // ev
     const { checked, name } = e.target;
 
