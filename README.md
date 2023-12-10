@@ -5,15 +5,14 @@ Wild-Explorer: Elevate your escapes. Unlock exclusive reservations for exception
 
 ## Features
 
-* Register User
-* Login User
-* Account User 
-    - My Profile 
-    - My Bookings : Book, Modify, Delete, Review.
-    - Book with Stripe Payment
-    - Calendar Dates Picker
-    - My Places : Create, Edit, Upload Photos, Delete Photo, Mark Photo as primary.
-* Logout User
+* User registration
+* User login
+* User Account 
+    - My Profile: My Reservations, My Properties 
+    - Reservations: Book & Pay with Stripe, Modify or Cancel Reservation, Leave a review of the property.
+    - Calendar Date Picker
+    - My Properties: Create, Edit, Upload Photos, Delete Photos.
+* User Logout
 
 
 ## Setup
