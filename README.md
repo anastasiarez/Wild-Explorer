@@ -33,13 +33,17 @@ cd backend
 node index.js
 ```
 
- ## Versions of dependencies
+ ## Stack
 
-node V14.18.0
-npm 8.0.0
-mongo V3.6.3
-mongoose @5.13.21
-dotenv @16.3.1
+React.js
+Node.js V14.18.0
+MongoDB V3.6.3
+Express
+Axios
+TailwindCSS
+React Stripe
+
+
 
 ## Screenshots
 
