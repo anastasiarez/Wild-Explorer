@@ -44,18 +44,21 @@ dotenv @16.3.1
 
 ## Screenshots
 
-### Index Page
+### Home Page
+![Home Page Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/1.png)
 
-### Register Page
+### Booking
+![Booking Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/2.png)
+![Booking Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/3.png)
 
-### Login Page
+### My Reservations Page
+![My Reservations Page Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/4.png)
 
-### User Account Page
-
-### My Places Page
+### My Properties
+![My Properties Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/5.png)
 
 ### Add new Place Page
+![Add New Place Page Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/6.png)
 
-### My Bookings Page
 
-### User Single Booking Page
+
