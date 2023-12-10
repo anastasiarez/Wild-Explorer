@@ -35,13 +35,13 @@ node index.js
 
  ## Stack
 
-React.js
-Node.js V14.18.0
-MongoDB V3.6.3
-Express
-Axios
-TailwindCSS
-React Stripe
+* React.js
+* Node.js V14.18.0
+* MongoDB V3.6.3
+* Express
+* Axios
+* TailwindCSS
+* React Stripe
 
 
 
