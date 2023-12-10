@@ -45,20 +45,20 @@ dotenv @16.3.1
 ## Screenshots
 
 ### Home Page
-![Home Page Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/1.png)
+!["Home Page Screenshot"](https://github.com/anastasiarez/Wild-Explorer/blob/main/1.png)
 
 ### Booking
-![Booking Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/2.png)
-![Booking Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/3.png)
+![Booking Screenshot](https://github.com/anastasiarez/Wild-Explorer/blob/main/2.png)
+![Booking Screenshot](https://github.com/anastasiarez/Wild-Explorer/blob/main/3.png)
 
 ### My Reservations Page
-![My Reservations Page Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/4.png)
+![My Reservations Page Screenshot](https://github.com/anastasiarez/Wild-Explorer/blob/main/4.png)
 
 ### My Properties
-![My Properties Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/5.png)
+![My Properties Screenshot](https://github.com/anastasiarez/Wild-Explorer/blob/main/5.png)
 
 ### Add new Place Page
-![Add New Place Page Screenshot](/home/labber/anastasiia.work/final_project/Wild-Explorer/6.png)
+![Add New Place Page Screenshot](https://github.com/anastasiarez/Wild-Explorer/blob/main/6.png)
 
 
 
