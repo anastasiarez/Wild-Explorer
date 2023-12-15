@@ -25,7 +25,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [searchResults, setSearchResults] = useState([]);
-  const [searchButtonClick, setSearchButtonClick] = useState(false);
+  const [searchHitEnter, setSearchHitEnter] = useState(false);
   const [propertyId, setPropertyId] = useState(null);
 
   return (
@@ -33,9 +33,9 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<Layout setSearchResults={setSearchResults} setSearchButtonClick={setSearchButtonClick} />}
+          element={<Layout setSearchResults={setSearchResults} setSearchHitEnter={setSearchHitEnter} />}
         >
-          <Route index element={<IndexPage searchResults={searchResults} searchButtonClick={searchButtonClick} />} />
+          <Route index element={<IndexPage searchResults={searchResults} searchHitEnter={searchHitEnter} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/account" element={<ProfilePage />} />

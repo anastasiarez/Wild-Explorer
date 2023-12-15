@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-const IndexPage = ({ searchResults, searchButtonClick }) => {
+const IndexPage = ({ searchResults, searchHitEnter }) => {
   const [places, setPlaces] = useState([]);
 
   useEffect(() => {
@@ -39,14 +39,14 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
             </Link>
           ))}
         </div>
-      ) : searchButtonClick && (
+      ) : searchHitEnter && (
         <div className="text-center text-orange-500 mt-4 mb-20 font-bold text-xl pb-2 border-b-2 border-gray-300">
           <p className="mb-5"> No search result found. Please browse our other places</p>
         </div>
       )}
 
-      <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
-        {places.length > 0 && searchResults.length === 0 ? (
+      <div className="mt-8 grid gap-x-6 gap-y-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {places.length > 0 && searchResults.length === 0 && (
           places.map((place) => (
             <Link key={place._id} to={`/place/${place._id}`}>
               <div className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg hover:bg-[#d9e7cb] transition duration-300 ease-in-out transform hover:scale-105">
@@ -74,10 +74,6 @@ const IndexPage = ({ searchResults, searchButtonClick }) => {
               </div>
             </Link>
           ))
-        ) : searchResults.length === 0 && (
-          <p className="text-center text-black-500 mt-4 font-bold text-xl">
-            No properties available.
-          </p>
         )}
       </div>
     </div>

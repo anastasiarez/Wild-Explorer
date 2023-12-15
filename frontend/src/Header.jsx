@@ -3,12 +3,12 @@ import { useContext } from "react";
 import { UserContext } from "./UserContext.jsx";
 import Search from "./Search.jsx";
 
-const Header = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
+const Header = ({ onSearch, setSearchResults, setSearchHitEnter }) => {
   const { user } = useContext(UserContext);
   const location = useLocation();
 
   return (
-    
+
     <>
       <div className="">
         {/* LOGO */}
@@ -18,6 +18,17 @@ const Header = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
             <a href="/" className="flex items-center gap-1">
               <img src="/logo.png" alt="Logo" className="w-30 h-20 mr-0" />
             </a>
+
+            <div id="searchbar" className="mt-10 mb-5">
+              {location.pathname === '/' && (
+                <Search
+                  setSearchResults={setSearchResults}
+                  setSearchHitEnter={setSearchHitEnter}
+                />
+              )}
+
+            </div>
+            
             <Link to={user ? "/account" : "/login"} className="pt-10">
               <div className="flex gap-2 border border-gray-300 rounded-full py-2 px-4">
                 <svg
@@ -50,16 +61,10 @@ const Header = ({ onSearch, setSearchResults, setSearchButtonClick }) => {
                 {!!user && <div>{user.name}</div>}
               </div>
             </Link>
-          </div>
-          <div id="searchbar" className="mt-10 mb-5">
-            {location.pathname === '/' && (
-              <Search
-                setSearchResults={setSearchResults}
-                setSearchButtonClick={setSearchButtonClick}
-              />
-            )}
 
+            
           </div>
+
         </header>
       </div>
     </>
